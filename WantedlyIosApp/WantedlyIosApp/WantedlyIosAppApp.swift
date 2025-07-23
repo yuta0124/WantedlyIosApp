@@ -11,7 +11,7 @@ import SwiftUI
 struct WantedlyIosAppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RecruitmentsScreen()
         }
     }
 }
