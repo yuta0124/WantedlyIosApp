@@ -1,0 +1,26 @@
+{
+  "sourceLanguage" : "ja",
+  "strings" : {
+    "recruitments_screen_content" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "募集一覧画面"
+          }
+        }
+      }
+    },
+    "recruitments_screen_title" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "募集一覧"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
