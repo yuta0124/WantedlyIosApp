@@ -11,4 +11,4 @@ class BookmarkViewModel: ObservableObject {
     // MARK: - Public Methods
     
     // MARK: - Private Methods
-} 
+}
