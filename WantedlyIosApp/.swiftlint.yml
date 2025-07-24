@@ -16,7 +16,7 @@ excluded:
   - Carthage
   - .build
   - DerivedData
-  - *.generated.swift
+  - "*.generated.swift"
 
 # 重要なルールのみ有効化
 opt_in_rules:
