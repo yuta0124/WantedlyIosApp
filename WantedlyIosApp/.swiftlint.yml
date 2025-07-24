@@ -1,0 +1,28 @@
+# SwiftLint Configuration File
+# https://github.com/realm/SwiftLint
+
+# 基本的なルールのみ有効化
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+  - function_body_length
+  - type_body_length
+  - file_length
+  - identifier_name
+
+# 除外するファイル/ディレクトリ
+excluded:
+  - Pods
+  - Carthage
+  - .build
+  - DerivedData
+  - *.generated.swift
+
+# 重要なルールのみ有効化
+opt_in_rules:
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - sorted_imports
+
+# 出力形式
+reporter: "xcode" 
