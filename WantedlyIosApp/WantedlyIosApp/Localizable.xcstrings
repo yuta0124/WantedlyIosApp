@@ -11,12 +11,32 @@
         }
       }
     },
-    "recruitments_screen_title" : {
+    "bookmark_screen_content" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ブックマーク画面"
+          }
+        }
+      }
+    },
+    "recruitments" : {
       "localizations" : {
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "募集一覧"
+          }
+        }
+      }
+    },
+    "bookmarks" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ブックマーク"
           }
         }
       }
