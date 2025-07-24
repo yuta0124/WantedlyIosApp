@@ -8,7 +8,6 @@ struct MainTabView: View {
                     Image(systemName: "magnifyingglass")
                     Text("recruitments")
                 }
-            
             BookmarkScreen()
                 .tabItem {
                     Image(systemName: "bookmark")
@@ -21,4 +20,4 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
-} 
+}

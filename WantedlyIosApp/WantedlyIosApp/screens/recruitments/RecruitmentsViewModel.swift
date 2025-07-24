@@ -11,4 +11,4 @@ class RecruitmentsViewModel: ObservableObject {
     // MARK: - Public Methods
     
     // MARK: - Private Methods
-} 
+}

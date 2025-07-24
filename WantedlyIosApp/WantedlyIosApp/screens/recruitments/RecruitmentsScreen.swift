@@ -2,7 +2,6 @@ import SwiftUI
 
 struct RecruitmentsScreen: View {
     @StateObject private var viewModel = RecruitmentsViewModel()
-    
     var body: some View {
         NavigationView {
             VStack {
@@ -20,4 +19,4 @@ struct RecruitmentsScreen: View {
 
 #Preview {
     RecruitmentsScreen()
-} 
+}
