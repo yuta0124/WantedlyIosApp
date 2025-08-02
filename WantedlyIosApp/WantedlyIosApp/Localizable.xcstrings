@@ -41,17 +41,6 @@
         }
       }
     },
-    "recruitments_screen_content" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "募集一覧画面"
-          }
-        }
-      }
-    },
     "search_keyword" : {
       "localizations" : {
         "ja" : {
