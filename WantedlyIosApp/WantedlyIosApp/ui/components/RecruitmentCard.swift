@@ -16,7 +16,7 @@ struct RecruitmentCard: View {
             AsyncImage(url: URL(string: thumbnailURL)) { phase in
                 switch phase {
                 case .empty:
-                    ShimmerView()
+                    Shimmer()
                 case .success(let image):
                     image
                         .resizable()

@@ -10,12 +10,6 @@ struct RecruitmentsUiState {
 class RecruitmentsViewModel: ObservableObject {
     @Published private(set) var uiState = RecruitmentsUiState()
     
-    init() {
-        // 初期化処理
-    }
-    
-    // MARK: - Public Methods
-    
     func onAction(_ intent: RecruitmentsIntent) {
         switch intent {
         case .onAppear:
@@ -24,11 +18,9 @@ class RecruitmentsViewModel: ObservableObject {
             onSearchTextChanged(text)
         }
     }
-    
-    // MARK: - Private Methods
-    
+        
     private func onAppear() {
-        // 画面表示時の処理
+        // 画面表示時の処理、isLoadingをtrueにする
     }
     
     private func onSearchTextChanged(_ text: String) {
