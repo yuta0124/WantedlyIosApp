@@ -41,15 +41,9 @@ class NetworkClient {
                 throw NetworkError.unexpectedException
             }
             
-            do {
-                return try JSONDecoder().decode(T.self, from: data)
-            } catch {
-                throw NetworkError.unexpectedException
-            }
-        } catch let networkError as NetworkError {
-            throw networkError
+            return try JSONDecoder().decode(T.self, from: data)
         } catch {
             throw error.toNetworkError()
         }
     }
-} 
+}

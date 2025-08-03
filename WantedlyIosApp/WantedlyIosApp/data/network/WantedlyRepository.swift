@@ -1,7 +1,11 @@
 import Foundation
 
 class WantedlyRepository {
-    private let networkClient = NetworkClient()
+    private let networkClient: NetworkClient
+    
+    init(networkClient: NetworkClient = NetworkClient()) {
+        self.networkClient = networkClient
+    }
     
     func fetchRecruitments(keyword: String? = nil, page: Int = 1) async -> Result<RecruitmentsResponse, NetworkError> {
         var parameters: [String: String] = [:]
@@ -12,7 +16,7 @@ class WantedlyRepository {
         parameters["page"] = String(page)
         
         do {
-            let response = try await networkClient.fetch("projects", parameters: parameters)
+            let response: RecruitmentsResponse = try await networkClient.fetch("projects", parameters: parameters)
             return .success(response)
         } catch {
             return .failure(error.toNetworkError())
