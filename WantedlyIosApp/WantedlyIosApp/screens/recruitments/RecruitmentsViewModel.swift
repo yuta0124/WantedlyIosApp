@@ -25,14 +25,17 @@ class RecruitmentsViewModel: ObservableObject {
         Task {
             uiState.isLoading = true
             
-            do {
-                let response = try await repository.fetchRecruitments(
-                    keyword: uiState.searchText.isEmpty ? nil : uiState.searchText,
-                    page: 1
-                )
-                uiState.recruitments = response.toRecruitments()
+            let result = await repository.fetchRecruitments(
+                keyword: uiState.searchText.isEmpty ? nil : uiState.searchText,
+                page: 1
+            )
+            
+            switch result {
+            case .success(let response):
+                uiState.recruitments = Recruitment.from(response)
                 print("取得した募集情報: \(uiState.recruitments.count)件")
-            } catch {
+            case .failure(let error):
+                // TODO: エラーハンドリング
                 print("募集情報取得エラー: \(error.localizedDescription)")
             }
             
