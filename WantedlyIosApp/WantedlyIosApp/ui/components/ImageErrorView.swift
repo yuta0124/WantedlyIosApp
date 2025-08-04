@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ImageError: View {
+struct ImageErrorView: View {
     var body: some View {
         Rectangle()
             .fill(Color.gray.opacity(0.3))
@@ -18,7 +18,7 @@ struct ImageError: View {
 }
 
 #Preview {
-    ImageError()
+    ImageErrorView()
         .frame(width: 200, height: 100)
         .padding()
 }

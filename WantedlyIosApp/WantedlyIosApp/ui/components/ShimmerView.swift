@@ -1,8 +1,8 @@
 import SwiftUI
 
-struct Shimmer: View {
+struct ShimmerView: View {
     @State private var isAnimating = false
-
+    
     var body: some View {
         GeometryReader { geometry in
             Rectangle()
@@ -43,4 +43,10 @@ struct Shimmer: View {
                 }
         }
     }
+}
+
+#Preview {
+    ShimmerView()
+        .frame(width: 200, height: 100)
+        .padding()
 }

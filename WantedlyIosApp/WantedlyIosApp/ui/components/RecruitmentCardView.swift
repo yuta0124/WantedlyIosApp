@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct RecruitmentCard: View {
+struct RecruitmentCardView: View {
     let companyLogoURL: String
     let companyName: String
     let thumbnailURL: String
@@ -8,23 +8,22 @@ struct RecruitmentCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            RecruitmentCardHeader(
+            RecruitmentCardHeaderView(
                 companyLogoURL: companyLogoURL,
                 companyName: companyName
             )
-    
+            
             AsyncImage(url: URL(string: thumbnailURL)) { phase in
                 switch phase {
                 case .empty:
-                    Shimmer()
+                    ShimmerView()
                 case .success(let image):
                     image
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
                 case .failure:
-                    ImageError()
+                    ImageErrorView()
                 @unknown default:
-                    ImagePlaceholder()
+                    ImagePlaceholderView()
                 }
             }
             .frame(maxWidth: .infinity)
@@ -41,7 +40,7 @@ struct RecruitmentCard: View {
 }
 
 #Preview {
-    RecruitmentCard(
+    RecruitmentCardView(
         companyLogoURL: "https://via.placeholder.com/24x24",
         companyName: "株式会社サンプル",
         thumbnailURL: "https://via.placeholder.com/400x200",

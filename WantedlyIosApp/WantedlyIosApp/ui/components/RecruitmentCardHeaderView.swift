@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct RecruitmentCardHeader: View {
+struct RecruitmentCardHeaderView: View {
     let companyLogoURL: String
     let companyName: String
     @State private var isBookmarked = false
@@ -10,15 +10,15 @@ struct RecruitmentCardHeader: View {
             AsyncImage(url: URL(string: companyLogoURL)) { phase in
                 switch phase {
                 case .empty:
-                    Shimmer()
+                    ShimmerView()
                 case .success(let image):
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                 case .failure:
-                    ImagePlaceholder()
+                    ImagePlaceholderView()
                 @unknown default:
-                    ImagePlaceholder()
+                    ImagePlaceholderView()
                 }
             }
             .frame(width: 24, height: 24)
@@ -43,7 +43,7 @@ struct RecruitmentCardHeader: View {
 }
 
 #Preview {
-    RecruitmentCardHeader(
+    RecruitmentCardHeaderView(
         companyLogoURL: "https://via.placeholder.com/24x24",
         companyName: "株式会社サンプル"
     )

@@ -14,12 +14,12 @@ struct RecruitmentsScreen: View {
             ZStack {
                 ScrollView {
                     LazyVStack(spacing: 16) {
-                        ForEach(0..<10, id: \.self) { index in
-                            RecruitmentCard(
-                                companyLogoURL: "https://via.placeholder.com/24x24",
-                                companyName: "株式会社サンプル\(index + 1)",
-                                thumbnailURL: "https://via.placeholder.com/400x200",
-                                description: "私たちは革新的なテクノロジーで社会に貢献する企業です。優秀な人材と共に、未来を創造していきましょう。"
+                        ForEach(viewModel.uiState.recruitments, id: \.id) { recruitment in
+                            RecruitmentCardView(
+                                companyLogoURL: recruitment.companyLogoImage ?? "",
+                                companyName: recruitment.companyName,
+                                thumbnailURL: recruitment.thumbnailUrl,
+                                description: recruitment.title
                             )
                         }
                     }
