@@ -3,6 +3,7 @@ import SwiftUI
 enum RecruitmentsIntent {
     case onAppear
     case onSearchTextChanged(String)
+    case search
 }
 
 struct RecruitmentsScreen: View {
@@ -16,7 +17,7 @@ struct RecruitmentsScreen: View {
                     LazyVStack(spacing: 16) {
                         ForEach(viewModel.uiState.recruitments, id: \.id) { recruitment in
                             RecruitmentCardView(
-                                companyLogoURL: recruitment.companyLogoImage ?? "",
+                                companyLogoURL: recruitment.companyLogoImage,
                                 companyName: recruitment.companyName,
                                 thumbnailURL: recruitment.thumbnailUrl,
                                 description: recruitment.title
@@ -36,6 +37,9 @@ struct RecruitmentsScreen: View {
                     placement: .navigationBarDrawer(displayMode: .always),
                     prompt: "search_keyword"
                 )
+                .onSubmit(of: .search) {
+                    viewModel.onAction(.search)
+                }
                 .focused($isSearchFocused)
                 .onTapGesture {
                     isSearchFocused = false
