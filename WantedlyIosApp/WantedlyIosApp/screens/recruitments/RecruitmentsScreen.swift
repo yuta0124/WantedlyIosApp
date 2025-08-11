@@ -28,7 +28,7 @@ struct RecruitmentsScreen: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.bottom, 16)
-                        .id("top")
+                        .id(RecruitmentsConstants.top)
                     }
                     .navigationTitle("recruitments")
                     .navigationBarTitleDisplayMode(.large)
@@ -54,7 +54,7 @@ struct RecruitmentsScreen: View {
                     .onChange(of: scrollToTop) { _, shouldScroll in
                         if shouldScroll {
                             withAnimation(.easeInOut(duration: 0.5)) {
-                                proxy.scrollTo("top", anchor: .top)
+                                proxy.scrollTo(RecruitmentsConstants.top, anchor: .top)
                             }
                             scrollToTop = false
                         }
