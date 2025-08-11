@@ -13,18 +13,11 @@ struct RecruitmentCardView: View {
                 companyName: companyName
             )
             
-            AsyncImage(url: URL(string: thumbnailURL)) { phase in
-                switch phase {
-                case .empty:
-                    ShimmerView()
-                case .success(let image):
-                    image
-                        .resizable()
-                case .failure:
-                    ImageErrorView()
-                @unknown default:
-                    ImagePlaceholderView()
-                }
+            CachedAsyncImageView(url: URL(string: thumbnailURL)) { image in
+                image
+                    .resizable()
+            } placeholder: {
+                ShimmerView()
             }
             .frame(maxWidth: .infinity)
             .aspectRatio(16/9, contentMode: .fit)
