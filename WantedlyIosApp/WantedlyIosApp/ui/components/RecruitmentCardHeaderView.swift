@@ -7,19 +7,12 @@ struct RecruitmentCardHeaderView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            AsyncImage(url: URL(string: companyLogoURL)) { phase in
-                switch phase {
-                case .empty:
-                    ShimmerView()
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                case .failure:
-                    ImagePlaceholderView()
-                @unknown default:
-                    ImagePlaceholderView()
-                }
+            CachedAsyncImageView(url: URL(string: companyLogoURL)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            } placeholder: {
+                ShimmerView()
             }
             .frame(width: 24, height: 24)
             .cornerRadius(4)
