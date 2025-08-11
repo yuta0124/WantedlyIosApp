@@ -16,6 +16,8 @@ class RecruitmentsViewModel: ObservableObject {
         switch intent {
         case .onAppear:
             onAppear()
+        case .search:
+            onSearch()
         case .onSearchTextChanged(let text):
             onSearchTextChanged(text)
         }
@@ -23,27 +25,37 @@ class RecruitmentsViewModel: ObservableObject {
     
     private func onAppear() {
         Task {
-            uiState.isLoading = true
-            
-            let result = await repository.fetchRecruitments(
-                keyword: uiState.searchText.isEmpty ? nil : uiState.searchText,
-                page: 1
-            )
-            
-            switch result {
-            case .success(let response):
-                uiState.recruitments = Recruitment.from(response)
-                print("取得した募集情報: \(uiState.recruitments.count)件")
-            case .failure(let error):
-                // TODO: エラーハンドリング
-                print("募集情報取得エラー: \(error.localizedDescription)")
-            }
-            
-            uiState.isLoading = false
+            await fetchRecruitments()
         }
     }
     
     private func onSearchTextChanged(_ text: String) {
         uiState.searchText = text
+    }
+    
+    private func onSearch() {
+        Task {
+            await fetchRecruitments(uiState.searchText)
+        }
+    }
+    
+    private func fetchRecruitments(_ keyword: String? = nil) async {
+        uiState.isLoading = true
+        
+        let result = await repository.fetchRecruitments(
+            keyword: keyword,
+            page: 1
+        )
+        
+        switch result {
+        case .success(let response):
+            uiState.recruitments = Recruitment.from(response)
+            print("取得件数: \(uiState.recruitments.count)件")
+        case .failure(let error):
+            // TODO: エラーハンドリング
+            print("募集一覧取得エラー: \(error.localizedDescription)")
+        }
+        
+        uiState.isLoading = false
     }
 }
