@@ -4,7 +4,7 @@ class NetworkClient {
     private let baseURL: String
     
     init() {
-        guard let baseURL = Bundle.main.infoDictionary?["BaseURL"] as? String else {
+        guard let baseURL = Bundle.main.object(forInfoDictionaryKey: "BaseURL") as? String else {
             fatalError("BaseURL not found in Info.plist")
         }
         self.baseURL = baseURL

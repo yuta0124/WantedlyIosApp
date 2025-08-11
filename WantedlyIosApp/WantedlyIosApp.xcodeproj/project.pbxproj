@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		9EB492F22E40F473008FEB71 /* Exceptions for "WantedlyIosApp" folder in "WantedlyIosApp" target */ = {
+		9E4800E82E3E64EA0055A8F8 /* Exceptions for "WantedlyIosApp" folder in "WantedlyIosApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -24,7 +24,7 @@
 		9E4036172E2CBA2D00572E98 /* WantedlyIosApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				9EB492F22E40F473008FEB71 /* Exceptions for "WantedlyIosApp" folder in "WantedlyIosApp" target */,
+				9E4800E82E3E64EA0055A8F8 /* Exceptions for "WantedlyIosApp" folder in "WantedlyIosApp" target */,
 			);
 			path = WantedlyIosApp;
 			sourceTree = "<group>";

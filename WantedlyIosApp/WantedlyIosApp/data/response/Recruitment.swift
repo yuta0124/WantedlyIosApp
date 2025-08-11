@@ -5,7 +5,7 @@ struct Recruitment {
     let title: String
     let companyName: String
     let canBookmark: Bool
-    let companyLogoImage: String
+    let companyLogoImage: String?
     let thumbnailUrl: String
 }
 
@@ -17,7 +17,7 @@ extension Recruitment {
                 title: recruitmentData.title,
                 companyName: recruitmentData.company.name,
                 canBookmark: recruitmentData.canBookmark,
-                companyLogoImage: recruitmentData.company.avatar?.original ?? "",
+                companyLogoImage: recruitmentData.company.avatar?.original,
                 thumbnailUrl: recruitmentData.image.original
             )
         }
