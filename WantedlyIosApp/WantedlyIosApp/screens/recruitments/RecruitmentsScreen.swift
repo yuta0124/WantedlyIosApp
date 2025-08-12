@@ -33,7 +33,6 @@ struct RecruitmentsScreen: View {
                                 }
                             }
                             
-                            // 追加読み込み中の表示
                             if viewModel.uiState.isLoadingMore {
                                 LoadingRecruitmentCardView()
                             }

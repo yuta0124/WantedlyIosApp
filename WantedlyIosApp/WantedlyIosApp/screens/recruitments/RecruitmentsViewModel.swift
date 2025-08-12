@@ -5,7 +5,6 @@ struct RecruitmentsUiState {
     var searchText = ""
     var isLoading = false
     var isLoadingMore = false
-    var hasMoreData = true
     var recruitments: [Recruitment] = []
 }
 
@@ -14,6 +13,7 @@ class RecruitmentsViewModel: ObservableObject {
     @Published private(set) var uiState = RecruitmentsUiState()
     private let repository = WantedlyRepository()
     private var currentPage = 1
+    private var hasMoreData = true
     
     func onAction(_ intent: RecruitmentsIntent) {
         switch intent {
@@ -65,7 +65,7 @@ class RecruitmentsViewModel: ObservableObject {
                 uiState.recruitments.append(contentsOf: newRecruitments)
             }
             
-            uiState.hasMoreData = newRecruitments.count >= 10
+            hasMoreData = newRecruitments.count >= 10
             currentPage = page
             
             print("取得件数: \(newRecruitments.count)件 (ページ: \(page))")
@@ -80,7 +80,7 @@ class RecruitmentsViewModel: ObservableObject {
     }
     
     private func loadMore() {
-        guard uiState.hasMoreData && !uiState.isLoadingMore else { return }
+        guard hasMoreData && !uiState.isLoadingMore else { return }
         
         Task {
             uiState.isLoadingMore = true
@@ -93,7 +93,7 @@ class RecruitmentsViewModel: ObservableObject {
     // ページネーション状態をリセット
     private func resetPagination() {
         currentPage = 1
-        uiState.hasMoreData = true
+        hasMoreData = true
         uiState.recruitments.removeAll()
     }
 }
