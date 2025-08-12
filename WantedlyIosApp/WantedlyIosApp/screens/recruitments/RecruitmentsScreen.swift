@@ -4,6 +4,7 @@ enum RecruitmentsIntent {
     case onAppear
     case onSearchTextChanged(String)
     case search
+    case loadMore
 }
 
 struct RecruitmentsScreen: View {
@@ -17,13 +18,24 @@ struct RecruitmentsScreen: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 16) {
-                            ForEach(viewModel.uiState.recruitments, id: \.id) { recruitment in
+                            ForEach(Array(viewModel.uiState.recruitments.enumerated()), id: \.element.id) { index, recruitment in
                                 RecruitmentCardView(
                                     companyLogoURL: recruitment.companyLogoImage,
                                     companyName: recruitment.companyName,
                                     thumbnailURL: recruitment.thumbnailUrl,
                                     description: recruitment.title
                                 )
+                                .onAppear {
+                                    // 最後から2番目のアイテムが表示された時に追加読み込みを開始
+                                    if index >= viewModel.uiState.recruitments.count - 2 {
+                                        viewModel.onAction(.loadMore)
+                                    }
+                                }
+                            }
+                            
+                            // 追加読み込み中の表示
+                            if viewModel.uiState.isLoadingMore {
+                                LoadingRecruitmentCardView()
                             }
                         }
                         .padding(.horizontal, 16)
@@ -43,6 +55,11 @@ struct RecruitmentsScreen: View {
                     .onSubmit(of: .search) {
                         viewModel.onAction(.search)
                         scrollToTop = true
+                    }
+                    .onChange(of: viewModel.uiState.searchText) { _, newText in
+                        if newText.isEmpty {
+                            viewModel.onAction(.onAppear)
+                        }
                     }
                     .focused($isSearchFocused)
                     .onTapGesture {

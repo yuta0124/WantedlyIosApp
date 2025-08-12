@@ -40,11 +40,9 @@ struct CachedAsyncImageView<Content: View, Placeholder: View>: View {
                     }
             }
         }
-        .onChange(of: url) { _, newURL in
-            if newURL != url {
-                loadedImage = nil
-                loadImage()
-            }
+        .onChange(of: url) { _, _ in
+            loadedImage = nil
+            loadImage()
         }
     }
     
