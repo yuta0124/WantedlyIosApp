@@ -41,7 +41,9 @@ class RecruitmentsViewModel: ObservableObject {
     
     private func onSearch() {
         Task {
-            resetPagination()
+            currentPage = 1
+            hasMoreData = true
+            uiState.isLoading = true
             await fetchRecruitments(uiState.searchText, page: 1)
         }
     }
@@ -90,7 +92,6 @@ class RecruitmentsViewModel: ObservableObject {
         }
     }
     
-    // ページネーション状態をリセット
     private func resetPagination() {
         currentPage = 1
         hasMoreData = true

@@ -55,11 +55,6 @@ struct RecruitmentsScreen: View {
                         viewModel.onAction(.search)
                         scrollToTop = true
                     }
-                    .onChange(of: viewModel.uiState.searchText) { _, newText in
-                        if newText.isEmpty {
-                            viewModel.onAction(.onAppear)
-                        }
-                    }
                     .focused($isSearchFocused)
                     .onTapGesture {
                         isSearchFocused = false
