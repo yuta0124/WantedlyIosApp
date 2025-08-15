@@ -8,12 +8,12 @@ class BookmarkedRecruitmentTable: Object {
     @Persisted var thumbnailUrl: String
     @Persisted var title: String
     
-    convenience init(from recruitment: Recruitment) {
+    convenience init(id: Int, companyLogoImage: String, companyName: String, thumbnailUrl: String, title: String) {
         self.init()
-        self.id = recruitment.id
-        self.companyLogoImage = recruitment.companyLogoImage
-        self.companyName = recruitment.companyName
-        self.thumbnailUrl = recruitment.thumbnailUrl
-        self.title = recruitment.title
+        self.id = id
+        self.companyLogoImage = companyLogoImage
+        self.companyName = companyName
+        self.thumbnailUrl = thumbnailUrl
+        self.title = title
     }
 }

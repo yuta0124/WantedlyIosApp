@@ -22,4 +22,14 @@ extension Recruitment {
             )
         }
     }
+
+    func toBookmarkedRecruitmentTable() -> BookmarkedRecruitmentTable {
+        return BookmarkedRecruitmentTable(
+            id: id,
+            companyLogoImage: companyLogoImage,
+            companyName: companyName,
+            thumbnailUrl: thumbnailUrl,
+            title: title
+        )
+    }
 }

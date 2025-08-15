@@ -5,41 +5,29 @@ import RealmSwift
 final class RealmManager {
     static let shared = RealmManager()
     
-    private var realm: Realm?
+    // swiftlint:disable:next force_try
+    let realm: Realm = try! Realm()
     private var notificationToken: NotificationToken?
     private var bookmarkedRecruitmentsPublisher = PassthroughSubject<[BookmarkedRecruitmentTable], Never>()
     
     private init() {
-        setupRealm()
         setupObserver()
     }
     
-    private func setupRealm() {
-        do {
-            realm = try Realm()
-        } catch {
-            print("Realm初期化エラー: \(error)")
-        }
-    }
-    
     func addBookmarkedRecruitment(_ recruitment: Recruitment) -> Bool {
-        guard let realm = realm else { return false }
-        
         do {
-            let bookmarkedRecruitment = BookmarkedRecruitmentTable(from: recruitment)
+            let bookmarkedRecruitment = recruitment.toBookmarkedRecruitmentTable()
             try realm.write {
                 realm.add(bookmarkedRecruitment, update: .modified)
             }
             return true
         } catch {
-            print("お気に入り追加エラー: \(error)")
+            print("addBookmarkedRecruitment: \(error)")
             return false
         }
     }
     
     func removeBookmarkedRecruitment(id: Int) -> Bool {
-        guard let realm = realm else { return false }
-        
         do {
             if let bookmarkedRecruitment = realm.object(ofType: BookmarkedRecruitmentTable.self, forPrimaryKey: id) {
                 try realm.write {
@@ -49,13 +37,12 @@ final class RealmManager {
             }
             return false
         } catch {
-            print("お気に入り削除エラー: \(error)")
+            print("removeBookmarkedRecruitment: \(error)")
             return false
         }
     }
     
     func isBookmarked(id: Int) -> Bool {
-        guard let realm = realm else { return false }
         return realm.object(ofType: BookmarkedRecruitmentTable.self, forPrimaryKey: id) != nil
     }
     
@@ -64,8 +51,6 @@ final class RealmManager {
     }
     
     private func setupObserver() {
-        guard let realm = realm else { return }
-        
         let results = realm.objects(BookmarkedRecruitmentTable.self)
         notificationToken = results.observe { [weak self] _ in
             let bookmarkedRecruitments = Array(results)
