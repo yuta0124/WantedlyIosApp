@@ -5,6 +5,7 @@ enum RecruitmentsIntent {
     case onSearchTextChanged(String)
     case search
     case loadMore
+    case toggleBookmark(Int)
 }
 
 struct RecruitmentsScreen: View {
@@ -23,7 +24,12 @@ struct RecruitmentsScreen: View {
                                     companyLogoURL: recruitment.companyLogoImage,
                                     companyName: recruitment.companyName,
                                     thumbnailURL: recruitment.thumbnailUrl,
-                                    description: recruitment.title
+                                    description: recruitment.title,
+                                    recruitmentId: recruitment.id,
+                                    isBookmarked: recruitment.isBookmarked,
+                                    onBookmarkToggled: {
+                                        viewModel.onAction(.toggleBookmark(recruitment.id))
+                                    }
                                 )
                                 .onAppear {
                                     // 最後から2番目のアイテムが表示された時に追加読み込みを開始
