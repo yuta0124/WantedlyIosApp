@@ -4,7 +4,7 @@ struct Recruitment {
     let id: Int
     let title: String
     let companyName: String
-    let canBookmark: Bool
+    let isBookmarked: Bool
     let companyLogoImage: String
     let thumbnailUrl: String
 }
@@ -16,10 +16,20 @@ extension Recruitment {
                 id: recruitmentData.id,
                 title: recruitmentData.title,
                 companyName: recruitmentData.company.name,
-                canBookmark: recruitmentData.canBookmark,
+                isBookmarked: recruitmentData.canBookmark,
                 companyLogoImage: recruitmentData.company.avatar?.original ?? "",
                 thumbnailUrl: recruitmentData.image.original
             )
         }
+    }
+
+    func toBookmarkedRecruitmentTable() -> BookmarkedRecruitmentTable {
+        return BookmarkedRecruitmentTable(
+            id: id,
+            companyLogoImage: companyLogoImage,
+            companyName: companyName,
+            thumbnailUrl: thumbnailUrl,
+            title: title
+        )
     }
 }

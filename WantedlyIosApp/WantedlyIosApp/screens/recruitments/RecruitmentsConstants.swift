@@ -7,4 +7,6 @@
 
 struct RecruitmentsConstants {
     static let top = "top"
+    static let pageSize = 10
+    static let initialPage = 1
 }

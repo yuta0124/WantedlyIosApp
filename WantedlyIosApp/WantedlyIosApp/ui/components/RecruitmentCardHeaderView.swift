@@ -3,7 +3,9 @@ import SwiftUI
 struct RecruitmentCardHeaderView: View {
     let companyLogoURL: String
     let companyName: String
-    @State private var isBookmarked = false
+    let recruitmentId: Int
+    let isBookmarked: Bool
+    let onBookmarkToggled: () -> Void
     
     var body: some View {
         HStack(spacing: 12) {
@@ -24,7 +26,7 @@ struct RecruitmentCardHeaderView: View {
             Spacer()
             
             Button {
-                isBookmarked.toggle()
+                onBookmarkToggled()
             } label: {
                 Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
                     .foregroundColor(isBookmarked ? .wantedlyBlue : .gray)
@@ -38,7 +40,10 @@ struct RecruitmentCardHeaderView: View {
 #Preview {
     RecruitmentCardHeaderView(
         companyLogoURL: "https://via.placeholder.com/24x24",
-        companyName: "株式会社サンプル"
+        companyName: "株式会社サンプル",
+        recruitmentId: 1,
+        isBookmarked: false,
+        onBookmarkToggled: { }
     )
     .padding()
 }

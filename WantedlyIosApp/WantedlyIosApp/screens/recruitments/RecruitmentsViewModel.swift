@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import SwiftUI
 
@@ -12,12 +13,14 @@ struct RecruitmentsUiState {
 class RecruitmentsViewModel: ObservableObject {
     @Published private(set) var uiState = RecruitmentsUiState()
     private let repository = WantedlyRepository()
-    private var currentPage = 1
+    private var currentPage = RecruitmentsConstants.initialPage
     private var hasMoreData = true
+    private var cancellables = Set<AnyCancellable>()
     
     func onAction(_ intent: RecruitmentsIntent) {
         switch intent {
         case .onAppear:
+            setupBookmarkObserver()
             onAppear()
         case .search:
             onSearch()
@@ -25,6 +28,8 @@ class RecruitmentsViewModel: ObservableObject {
             onSearchTextChanged(text)
         case .loadMore:
             loadMore()
+        case .toggleBookmark(let recruitmentId):
+            toggleBookmark(recruitmentId: recruitmentId)
         }
     }
     
@@ -41,15 +46,15 @@ class RecruitmentsViewModel: ObservableObject {
     
     private func onSearch() {
         Task {
-            currentPage = 1
+            currentPage = RecruitmentsConstants.initialPage
             hasMoreData = true
             uiState.isLoading = true
-            await fetchRecruitments(uiState.searchText, page: 1)
+            await fetchRecruitments(uiState.searchText, page: RecruitmentsConstants.initialPage)
         }
     }
     
-    private func fetchRecruitments(_ keyword: String? = nil, page: Int = 1) async {
-        if page == 1 {
+    private func fetchRecruitments(_ keyword: String? = nil, page: Int = RecruitmentsConstants.initialPage) async {
+        if page == RecruitmentsConstants.initialPage {
             uiState.isLoading = true
         }
         
@@ -61,24 +66,51 @@ class RecruitmentsViewModel: ObservableObject {
         switch result {
         case .success(let response):
             let newRecruitments = Recruitment.from(response)
-            if page == 1 {
-                uiState.recruitments = newRecruitments
+            let updatedRecruitments = createUpdatedRecruitments(from: newRecruitments)
+            
+            if page == RecruitmentsConstants.initialPage {
+                uiState.recruitments = updatedRecruitments
             } else {
-                uiState.recruitments.append(contentsOf: newRecruitments)
+                uiState.recruitments.append(contentsOf: updatedRecruitments)
             }
             
-            hasMoreData = newRecruitments.count >= 10
+            hasMoreData = newRecruitments.count >= RecruitmentsConstants.pageSize
             currentPage = page
             
             print("取得件数: \(newRecruitments.count)件 (ページ: \(page))")
         case .failure(let error):
-            // TODO: エラーハンドリング
             print("募集一覧取得エラー: \(error.localizedDescription)")
+            // TODO: エラーハンドリング
         }
         
-        if page == 1 {
+        if page == RecruitmentsConstants.initialPage {
             uiState.isLoading = false
         }
+    }
+    
+    private func createUpdatedRecruitments(from recruitments: [Recruitment]) -> [Recruitment] {
+        return recruitments.map { recruitment in
+            let isBookmarked = repository.isBookmarked(id: recruitment.id)
+            return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
+        }
+    }
+    
+    private func updateRecruitmentBookmarkStatus(recruitment: Recruitment, isBookmarked: Bool) -> Recruitment {
+        return Recruitment(
+            id: recruitment.id,
+            title: recruitment.title,
+            companyName: recruitment.companyName,
+            isBookmarked: isBookmarked,
+            companyLogoImage: recruitment.companyLogoImage,
+            thumbnailUrl: recruitment.thumbnailUrl
+        )
+    }
+    
+    private func updateRecruitmentBookmarkStatus(recruitmentId: Int, isBookmarked: Bool) -> Recruitment? {
+        guard let recruitment = uiState.recruitments.first(where: { $0.id == recruitmentId }) else {
+            return nil
+        }
+        return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
     }
     
     private func loadMore() {
@@ -93,8 +125,47 @@ class RecruitmentsViewModel: ObservableObject {
     }
     
     private func resetPagination() {
-        currentPage = 1
+        currentPage = RecruitmentsConstants.initialPage
         hasMoreData = true
         uiState.recruitments.removeAll()
+    }
+    
+    private func toggleBookmark(recruitmentId: Int) {
+        guard let index = uiState.recruitments.firstIndex(where: { $0.id == recruitmentId }) else {
+            return
+        }
+        
+        let recruitment = uiState.recruitments[index]
+        uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
+        
+        if uiState.recruitments[index].isBookmarked {
+            let success = repository.addBookmark(recruitment)
+            if !success {
+                uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
+            }
+        } else {
+            let success = repository.removeBookmark(id: recruitmentId)
+            if !success {
+                uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
+            }
+        }
+    }
+    
+    private func setupBookmarkObserver() {
+        RealmManager.shared.getBookmarkedRecruitmentsPublisher()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] bookmarkedRecruitments in
+                self?.updateBookmarkStatusFromDatabase(bookmarkedRecruitments)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func updateBookmarkStatusFromDatabase(_ bookmarkedRecruitments: [BookmarkedRecruitmentTable]) {
+        let bookmarkedIds = Set(bookmarkedRecruitments.map { $0.id })
+        
+        uiState.recruitments = uiState.recruitments.map { recruitment in
+            let isBookmarked = bookmarkedIds.contains(recruitment.id)
+            return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
+        }
     }
 }
