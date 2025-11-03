@@ -12,7 +12,7 @@ struct RecruitmentsUiState {
 @MainActor
 class RecruitmentsViewModel: ObservableObject {
     @Published private(set) var uiState = RecruitmentsUiState()
-    private let repository = WantedlyRepository()
+    private let repository: WantedlyRepository = DefaultWantedlyRepository()
     private var currentPage = RecruitmentsConstants.initialPage
     private var hasMoreData = true
     private var cancellables = Set<AnyCancellable>()

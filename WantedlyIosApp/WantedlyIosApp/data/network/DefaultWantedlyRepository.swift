@@ -1,14 +1,14 @@
 import Foundation
 
-class WantedlyRepository {
+final class DefaultWantedlyRepository: WantedlyRepository {
     private let networkClient: NetworkClient
     private let realmManager = RealmManager.shared
     
-    init(networkClient: NetworkClient = NetworkClient()) {
+    init(networkClient: NetworkClient = DefaultNetworkClient()) {
         self.networkClient = networkClient
     }
     
-    func fetchRecruitments(keyword: String? = nil, page: Int = 1) async -> Result<RecruitmentsResponse, NetworkError> {
+    func fetchRecruitments(keyword: String?, page: Int) async -> Result<RecruitmentsResponse, NetworkError> {
         var parameters: [String: String] = [:]
         
         if let keyword = keyword {
@@ -38,3 +38,4 @@ class WantedlyRepository {
         return realmManager.isBookmarked(id: id)
     }
 }
+
