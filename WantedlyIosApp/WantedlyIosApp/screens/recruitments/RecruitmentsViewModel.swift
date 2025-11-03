@@ -17,11 +17,15 @@ class RecruitmentsViewModel: ObservableObject {
     private var hasMoreData = true
     private var cancellables = Set<AnyCancellable>()
     
+    init() {
+        Task {
+            setupBookmarkObserver()
+            await fetchRecruitments()
+        }
+    }
+    
     func onAction(_ intent: RecruitmentsIntent) {
         switch intent {
-        case .onAppear:
-            setupBookmarkObserver()
-            onAppear()
         case .search:
             onSearch()
         case .onSearchTextChanged(let text):
@@ -30,13 +34,6 @@ class RecruitmentsViewModel: ObservableObject {
             loadMore()
         case .toggleBookmark(let recruitmentId):
             toggleBookmark(recruitmentId: recruitmentId)
-        }
-    }
-    
-    private func onAppear() {
-        Task {
-            resetPagination()
-            await fetchRecruitments()
         }
     }
     
@@ -122,12 +119,6 @@ class RecruitmentsViewModel: ObservableObject {
             await fetchRecruitments(uiState.searchText, page: nextPage)
             uiState.isLoadingMore = false
         }
-    }
-    
-    private func resetPagination() {
-        currentPage = RecruitmentsConstants.initialPage
-        hasMoreData = true
-        uiState.recruitments.removeAll()
     }
     
     private func toggleBookmark(recruitmentId: Int) {

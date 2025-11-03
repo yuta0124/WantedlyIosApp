@@ -5,7 +5,6 @@ import RealmSwift
 final class RealmManager {
     static let shared = RealmManager()
     
-    // swiftlint:disable:next force_try
     let realm: Realm = try! Realm()
     private var notificationToken: NotificationToken?
     private var bookmarkedRecruitmentsPublisher = PassthroughSubject<[BookmarkedRecruitmentTable], Never>()
