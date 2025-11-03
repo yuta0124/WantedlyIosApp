@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 final class DefaultWantedlyRepository: WantedlyRepository {
@@ -6,6 +7,10 @@ final class DefaultWantedlyRepository: WantedlyRepository {
     
     init(networkClient: NetworkClient = DefaultNetworkClient()) {
         self.networkClient = networkClient
+    }
+    
+    var bookmarkCompanies: AnyPublisher<[BookmarkedRecruitmentTable], Never> {
+        return realmManager.getBookmarkedRecruitmentsPublisher()
     }
     
     func fetchRecruitments(keyword: String?, page: Int) async -> Result<RecruitmentsResponse, NetworkError> {
