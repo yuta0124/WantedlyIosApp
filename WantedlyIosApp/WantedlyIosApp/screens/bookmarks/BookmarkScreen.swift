@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BookmarkScreen: View {
     @StateObject private var viewModel = BookmarkViewModel()
+    
     var body: some View {
         NavigationView {
             VStack {
