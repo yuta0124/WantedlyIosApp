@@ -11,15 +11,12 @@ struct BookmarkUiState {
     var recruitments: [Recruitment] = []
 }
 
-enum BookmarkIntent {
-    case bookmarkClick(Int)
-}
-
 @MainActor
 class BookmarkViewModel: ObservableObject {
     @Published private(set) var uiState = BookmarkUiState()
     private let repository: WantedlyRepository = DefaultWantedlyRepository()
-    
+    private var cancellables = Set<AnyCancellable>()
+
     init() {
         setupStateCombine()
     }
@@ -32,17 +29,34 @@ class BookmarkViewModel: ObservableObject {
     }
     
     private func setupStateCombine() {
-        repository.bookmarkCompanies
-            .map { bookmarkedRecruitments in
-                let recruitments = self.convertToRecruitments(from: bookmarkedRecruitments)
-                let loading: BookmarkLoadingState = recruitments.isEmpty ? .empty : .none
+        repository.bookmarkedCompanies
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] bookmarkedRecruitments in
+                guard let self = self else { return }
                 
-                return BookmarkUiState(
+                let loading: BookmarkLoadingState = if bookmarkedRecruitments.isEmpty {
+                    .empty
+                } else {
+                    .none
+                }
+                
+                let recruitments: [Recruitment] = bookmarkedRecruitments.map {
+                    Recruitment(
+                        id: $0.id,
+                        title: $0.title,
+                        companyName: $0.companyName,
+                        isBookmarked: true,
+                        companyLogoImage: $0.companyLogoImage,
+                        thumbnailUrl: $0.thumbnailUrl
+                    )
+                }
+                
+                self.uiState = BookmarkUiState(
                     loading: loading,
                     recruitments: recruitments
                 )
             }
-            .assign(to: &$uiState)
+            .store(in: &cancellables)
     }
     
     private func convertToRecruitments(from tables: [BookmarkedRecruitmentTable]) -> [Recruitment] {

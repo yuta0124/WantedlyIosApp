@@ -1,5 +1,9 @@
 import SwiftUI
 
+enum BookmarkIntent {
+    case bookmarkClick(Int)
+}
+
 struct BookmarkScreen: View {
     @StateObject private var viewModel = BookmarkViewModel()
     
@@ -9,7 +13,12 @@ struct BookmarkScreen: View {
                 if viewModel.uiState.loading == .empty {
                     BookmarkEmptyView()
                 } else {
-                    BookmarkListView(viewModel: viewModel)
+                    BookmarkListView(
+                        recruitments: viewModel.uiState.recruitments,
+                        onAction: { intent in
+                            viewModel.onAction(intent)
+                        }
+                    )
                 }
             }
             .navigationTitle("bookmarks")
@@ -31,12 +40,13 @@ struct BookmarkEmptyView: View {
 }
 
 struct BookmarkListView: View {
-    let viewModel: BookmarkViewModel
+    let recruitments: [Recruitment]
+    let onAction: (BookmarkIntent) -> Void
     
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
-                ForEach(viewModel.uiState.recruitments, id: \.id) { recruitment in
+                ForEach(recruitments, id: \.id) { recruitment in
                     RecruitmentCardView(
                         companyLogoURL: recruitment.companyLogoImage,
                         companyName: recruitment.companyName,
@@ -45,7 +55,7 @@ struct BookmarkListView: View {
                         recruitmentId: recruitment.id,
                         isBookmarked: recruitment.isBookmarked,
                         onBookmarkToggled: {
-                            viewModel.onAction(.bookmarkClick(recruitment.id))
+                            onAction(.bookmarkClick(recruitment.id))
                         }
                     )
                 }

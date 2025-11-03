@@ -9,7 +9,7 @@ final class DefaultWantedlyRepository: WantedlyRepository {
         self.networkClient = networkClient
     }
     
-    var bookmarkCompanies: AnyPublisher<[BookmarkedRecruitmentTable], Never> {
+    var bookmarkedCompanies: AnyPublisher<[BookmarkedRecruitmentTable], Never> {
         return realmManager.getBookmarkedRecruitmentsPublisher()
     }
     
