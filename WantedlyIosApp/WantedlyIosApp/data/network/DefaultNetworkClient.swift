@@ -1,6 +1,6 @@
 import Foundation
 
-class NetworkClient {
+final class DefaultNetworkClient: NetworkClient {
     private let baseURL: String
     
     init() {
@@ -10,7 +10,7 @@ class NetworkClient {
         self.baseURL = baseURL
     }
     
-    func fetch<T: Decodable>(_ endpoint: String, parameters: [String: String]? = nil) async throws -> T {
+    func fetch<T: Decodable>(_ endpoint: String, parameters: [String: String]?) async throws -> T {
         var urlComponents = URLComponents(string: baseURL + endpoint)
         
         if let parameters = parameters {
@@ -47,3 +47,4 @@ class NetworkClient {
         }
     }
 }
+
