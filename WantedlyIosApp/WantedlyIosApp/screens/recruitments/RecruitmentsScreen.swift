@@ -1,7 +1,6 @@
 import SwiftUI
 
 enum RecruitmentsIntent {
-    case onAppear
     case onSearchTextChanged(String)
     case search
     case loadMore
@@ -64,9 +63,6 @@ struct RecruitmentsScreen: View {
                     .focused($isSearchFocused)
                     .onTapGesture {
                         isSearchFocused = false
-                    }
-                    .onAppear {
-                        viewModel.onAction(.onAppear)
                     }
                     .onChange(of: scrollToTop) { _, shouldScroll in
                         if shouldScroll {
