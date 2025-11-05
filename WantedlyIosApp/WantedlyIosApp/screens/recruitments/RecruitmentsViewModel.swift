@@ -143,7 +143,7 @@ class RecruitmentsViewModel: ObservableObject {
     }
     
     private func setupBookmarkObserver() {
-        RealmManager.shared.getBookmarkedRecruitmentsPublisher()
+        repository.bookmarkedCompanies
             .receive(on: DispatchQueue.main)
             .sink { [weak self] bookmarkedRecruitments in
                 self?.updateBookmarkStatusFromDatabase(bookmarkedRecruitments)
