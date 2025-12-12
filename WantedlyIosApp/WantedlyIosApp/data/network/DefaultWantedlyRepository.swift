@@ -28,6 +28,15 @@ final class DefaultWantedlyRepository: WantedlyRepository {
             return .failure(error.toNetworkError())
         }
     }
+    
+    func fetchRecruitmentDetail(_ id: Int) async -> Result<RecruitmentDetailResponse, NetworkError> {
+        do {
+            let response: RecruitmentDetailResponse = try await networkClient.fetch("projects/\(id)", parameters: nil)
+            return .success(response)
+        } catch {
+            return .failure(error.toNetworkError())
+        }
+    }
         
     func addBookmark(_ recruitment: Recruitment) -> Bool {
         let success = realmManager.addBookmarkedRecruitment(recruitment)
@@ -43,4 +52,3 @@ final class DefaultWantedlyRepository: WantedlyRepository {
         return realmManager.isBookmarked(id: id)
     }
 }
-

@@ -74,7 +74,6 @@ class RecruitmentsViewModel: ObservableObject {
             hasMoreData = newRecruitments.count >= RecruitmentsConstants.pageSize
             currentPage = page
             
-            print("取得件数: \(newRecruitments.count)件 (ページ: \(page))")
         case .failure(let error):
             print("募集一覧取得エラー: \(error.localizedDescription)")
             // TODO: エラーハンドリング

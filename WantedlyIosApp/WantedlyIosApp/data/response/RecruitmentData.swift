@@ -22,23 +22,4 @@ struct RecruitmentData: Codable {
     let supported: Bool?
     let useWebview: Bool?
     let videoAvailable: Bool?
-    
-    enum CodingKeys: String, CodingKey {
-        case id, image, title, company, description
-        case canBookmark = "can_bookmark"
-        case canSupport = "can_support"
-        case candidateCount = "candidate_count"
-        case categoryMessage = "category_message"
-        case leader, location
-        case locationSuffix = "location_suffix"
-        case lookingFor = "looking_for"
-        case pageView = "page_view"
-        case publishedAt = "published_at"
-        case staffings
-        case staffingsCount = "staffings_count"
-        case supportCount = "support_count"
-        case supported
-        case useWebview = "use_webview"
-        case videoAvailable = "video_available"
-    }
 }

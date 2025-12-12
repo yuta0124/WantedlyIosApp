@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct RecruitmentCardHeaderView: View {
+struct CompanyInfoHeaderView: View {
     let companyLogoURL: String
     let companyName: String
     let recruitmentId: Int
@@ -38,7 +38,7 @@ struct RecruitmentCardHeaderView: View {
 }
 
 #Preview {
-    RecruitmentCardHeaderView(
+    CompanyInfoHeaderView(
         companyLogoURL: "https://via.placeholder.com/24x24",
         companyName: "株式会社サンプル",
         recruitmentId: 1,

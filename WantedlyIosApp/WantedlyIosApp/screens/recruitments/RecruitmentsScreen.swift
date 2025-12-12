@@ -19,17 +19,19 @@ struct RecruitmentsScreen: View {
                     ScrollView {
                         LazyVStack(spacing: 16) {
                             ForEach(Array(viewModel.uiState.recruitments.enumerated()), id: \.element.id) { index, recruitment in
-                                RecruitmentCardView(
-                                    companyLogoURL: recruitment.companyLogoImage,
-                                    companyName: recruitment.companyName,
-                                    thumbnailURL: recruitment.thumbnailUrl,
-                                    description: recruitment.title,
-                                    recruitmentId: recruitment.id,
-                                    isBookmarked: recruitment.isBookmarked,
-                                    onBookmarkToggled: {
-                                        viewModel.onAction(.toggleBookmark(recruitment.id))
-                                    }
-                                )
+                                NavigationLink(value: recruitment.id) {
+                                    RecruitmentCardView(
+                                        companyLogoURL: recruitment.companyLogoImage,
+                                        companyName: recruitment.companyName,
+                                        thumbnailURL: recruitment.thumbnailUrl,
+                                        description: recruitment.title,
+                                        recruitmentId: recruitment.id,
+                                        isBookmarked: recruitment.isBookmarked,
+                                        onBookmarkToggled: {
+                                            viewModel.onAction(.toggleBookmark(recruitment.id))
+                                        }
+                                    )
+                                }
                                 .onAppear {
                                     // 最後から2番目のアイテムが表示された時に追加読み込みを開始
                                     if index >= viewModel.uiState.recruitments.count - 2 {
@@ -48,6 +50,9 @@ struct RecruitmentsScreen: View {
                     }
                     .navigationTitle("recruitments")
                     .navigationBarTitleDisplayMode(.large)
+                    .navigationDestination(for: Int.self) { recruitmentId in
+                        DetailScreen(recruitmentId: recruitmentId)
+                    }
                     .searchable(
                         text: Binding(
                             get: { viewModel.uiState.searchText },
@@ -71,7 +76,7 @@ struct RecruitmentsScreen: View {
                             }
                             scrollToTop = false
                         }
-                    }
+                    } 
                 }
                 
                 if viewModel.uiState.isLoading {
