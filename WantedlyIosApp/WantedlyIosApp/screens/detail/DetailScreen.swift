@@ -53,6 +53,7 @@ struct DetailScreen: View {
                     }
                     .padding(.top, 4)
                     .padding(.horizontal, 16)
+                    .padding(.bottom, proxy.safeAreaInsets.bottom)
                 }
                 .background {
                     GeometryReader { contentProxy in
@@ -64,6 +65,7 @@ struct DetailScreen: View {
             }
             .ignoresSafeArea()
             .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar(.hidden, for: .tabBar)
             .overlay(alignment: .top) {
                 if scrollOffset < 0 {
                     Color(.systemBackground)
