@@ -82,7 +82,7 @@ private struct WhatDescriptionSection: View {
     var body: some View {
         DetailDescriptionSection(
             title: "What?",
-            description: description.isEmpty ? "---" : description
+            description: description
         )
     }
 }
@@ -93,7 +93,7 @@ private struct WhyDescriptionSection: View {
     var body: some View {
         DetailDescriptionSection(
             title: "Why?",
-            description: description.isEmpty ? "---" : description
+            description: description
         )
     }
 }
@@ -104,7 +104,7 @@ private struct HowDescriptionSection: View {
     var body: some View {
         DetailDescriptionSection(
             title: "Who?",
-            description: description.isEmpty ? "---" : description
+            description: description
         )
     }
 }

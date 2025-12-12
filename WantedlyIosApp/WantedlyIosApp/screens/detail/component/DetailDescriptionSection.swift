@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DetailDescriptionSection: View {
     let title: String
-    let description: String?
+    let description: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -25,7 +25,7 @@ struct DetailDescriptionSection: View {
                     }
                 )
             
-            Text(description ?? "no_data")
+            Text(description.isEmpty ? "---" : description)
                 .font(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
