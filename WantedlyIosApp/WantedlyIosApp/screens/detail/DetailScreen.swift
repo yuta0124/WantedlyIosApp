@@ -26,6 +26,7 @@ struct DetailScreen: View {
                     }
                     .frame(maxWidth: .infinity)
                     .aspectRatio(16/9, contentMode: .fit)
+                    .stretchy()
                     
                     VStack(spacing: 12) {
                         CompanyInfoHeaderView(
