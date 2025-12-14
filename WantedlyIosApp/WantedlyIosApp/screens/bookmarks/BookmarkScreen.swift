@@ -23,6 +23,9 @@ struct BookmarkScreen: View {
             }
             .navigationTitle("bookmarks")
             .navigationBarTitleDisplayMode(.large)
+            .navigationDestination(for: Int.self) { recruitmentId in
+                DetailScreen(recruitmentId: recruitmentId)
+            }
         }
     }
 }
@@ -47,17 +50,19 @@ struct BookmarkListView: View {
         ScrollView {
             LazyVStack(spacing: 16) {
                 ForEach(recruitments, id: \.id) { recruitment in
-                    RecruitmentCardView(
-                        companyLogoURL: recruitment.companyLogoImage,
-                        companyName: recruitment.companyName,
-                        thumbnailURL: recruitment.thumbnailUrl,
-                        description: recruitment.title,
-                        recruitmentId: recruitment.id,
-                        isBookmarked: recruitment.isBookmarked,
-                        onBookmarkToggled: {
-                            onAction(.bookmarkClick(recruitment.id))
-                        }
-                    )
+                    NavigationLink(value: recruitment.id) {
+                        RecruitmentCardView(
+                            companyLogoURL: recruitment.companyLogoImage,
+                            companyName: recruitment.companyName,
+                            thumbnailURL: recruitment.thumbnailUrl,
+                            description: recruitment.title,
+                            recruitmentId: recruitment.id,
+                            isBookmarked: recruitment.isBookmarked,
+                            onBookmarkToggled: {
+                                onAction(.bookmarkClick(recruitment.id))
+                            }
+                        )
+                    }
                 }
             }
             .padding(.horizontal, 16)

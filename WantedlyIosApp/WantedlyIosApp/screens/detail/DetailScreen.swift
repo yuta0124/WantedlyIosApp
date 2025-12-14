@@ -1,12 +1,11 @@
 //
-//  DetailViewModel.swift
+//  DetailScreen.swift
 //  WantedlyIosApp
 //
 //  Created by 佐藤優太 on 2025/11/11.
 //
 import SwiftUI
 
-// TODO: ナビゲーションタイトルのカラー修正
 struct DetailScreen: View {
     @StateObject private var viewModel: DetailViewModel
     @State private var scrollOffset: CGFloat = 0
