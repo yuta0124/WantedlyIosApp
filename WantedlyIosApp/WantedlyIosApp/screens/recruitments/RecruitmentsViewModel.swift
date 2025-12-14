@@ -86,7 +86,7 @@ class RecruitmentsViewModel: ObservableObject {
     
     private func createUpdatedRecruitments(from recruitments: [Recruitment]) -> [Recruitment] {
         return recruitments.map { recruitment in
-            let isBookmarked = repository.isBookmarked(id: recruitment.id)
+            let isBookmarked = repository.isBookmarked(recruitment.id)
             return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
         }
     }
@@ -134,7 +134,7 @@ class RecruitmentsViewModel: ObservableObject {
                 uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
             }
         } else {
-            let success = repository.removeBookmark(id: recruitmentId)
+            let success = repository.removeBookmark(recruitmentId)
             if !success {
                 uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
             }

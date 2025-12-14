@@ -24,7 +24,7 @@ class BookmarkViewModel: ObservableObject {
     func onAction(_ intent: BookmarkIntent) {
         switch intent {
         case .bookmarkClick(let id):
-            repository.removeBookmark(id: id)
+            repository.removeBookmark(id)
         }
     }
     

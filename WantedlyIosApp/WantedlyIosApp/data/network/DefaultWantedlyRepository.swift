@@ -43,12 +43,12 @@ final class DefaultWantedlyRepository: WantedlyRepository {
         return success
     }
     
-    func removeBookmark(id: Int) -> Bool {
+    func removeBookmark(_ id: Int) -> Bool {
         let success = realmManager.removeBookmarkedRecruitment(id: id)
         return success
     }
     
-    func isBookmarked(id: Int) -> Bool {
+    func isBookmarked(_ id: Int) -> Bool {
         return realmManager.isBookmarked(id: id)
     }
 }
