@@ -105,7 +105,7 @@ private struct HowDescriptionSection: View {
     
     var body: some View {
         DetailDescriptionSection(
-            title: "Who?",
+            title: "How?",
             description: description
         )
     }

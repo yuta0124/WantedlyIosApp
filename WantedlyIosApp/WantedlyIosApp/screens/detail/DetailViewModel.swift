@@ -6,13 +6,11 @@
 //
 import Combine
 import Foundation
-import SwiftUI
 
 @MainActor
 class DetailViewModel: ObservableObject {
     private let repository: WantedlyRepository
     private var cancellables = Set<AnyCancellable>()
-
 
     // MARK: UIState
     @Published private(set) var recruitmentId: Int = -1
