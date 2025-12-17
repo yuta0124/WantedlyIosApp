@@ -1,4 +1,3 @@
-import Foundation
 
 struct RecruitmentsResponse: Codable {
     let data: [RecruitmentData]

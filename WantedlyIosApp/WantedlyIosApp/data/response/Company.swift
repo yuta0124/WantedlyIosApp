@@ -12,14 +12,4 @@ struct Company: Codable {
     let latitude: Double?
     let longitude: Double?
     let payrollNumber: Int?
-    
-    enum CodingKeys: String, CodingKey {
-        case id, name, url
-        case addressPrefix = "address_prefix"
-        case addressSuffix = "address_suffix"
-        case avatar
-        case foundedOn = "founded_on"
-        case founder, latitude, longitude
-        case payrollNumber = "payroll_number"
-    }
 }
