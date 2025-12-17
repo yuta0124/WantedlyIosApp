@@ -14,22 +14,23 @@ struct BookmarkUiState {
 @MainActor
 class BookmarkViewModel: ObservableObject {
     @Published private(set) var uiState = BookmarkUiState()
-    private let repository: WantedlyRepository = DefaultWantedlyRepository()
+    private let bookmarkRepository: BookmarkRepository
     private var cancellables = Set<AnyCancellable>()
 
-    init() {
+    init(bookmarkRepository: BookmarkRepository = DefaultBookmarkRepository()) {
+        self.bookmarkRepository = bookmarkRepository
         setupStateCombine()
     }
     
     func onAction(_ intent: BookmarkIntent) {
         switch intent {
         case .bookmarkClick(let id):
-            repository.removeBookmark(id)
+            bookmarkRepository.removeBookmark(id)
         }
     }
     
     private func setupStateCombine() {
-        repository.bookmarkedCompanies
+        bookmarkRepository.bookmarkedRecruitments
             .receive(on: DispatchQueue.main)
             .sink { [weak self] bookmarkedRecruitments in
                 guard let self = self else { return }

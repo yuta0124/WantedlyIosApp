@@ -9,7 +9,8 @@ import Foundation
 
 @MainActor
 class DetailViewModel: ObservableObject {
-    private let repository: WantedlyRepository
+    private let wantedlyRepository: WantedlyRepository
+    private let bookmarkRepository: BookmarkRepository
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: UIState
@@ -26,10 +27,12 @@ class DetailViewModel: ObservableObject {
     
     init(
         recruitmentId: Int,
-        wantedlyRepository: WantedlyRepository = DefaultWantedlyRepository()
+        wantedlyRepository: WantedlyRepository = DefaultWantedlyRepository(),
+        bookmarkRepository: BookmarkRepository = DefaultBookmarkRepository()
     ) {
         self.recruitmentId = recruitmentId
-        self.repository = wantedlyRepository
+        self.wantedlyRepository = wantedlyRepository
+        self.bookmarkRepository = bookmarkRepository
         
         Task {
             await fetchRecruitmentDetail()
@@ -37,7 +40,7 @@ class DetailViewModel: ObservableObject {
     }
     
     private func fetchRecruitmentDetail() async {
-        let result = await repository.fetchRecruitmentDetail(self.recruitmentId)
+        let result = await wantedlyRepository.fetchRecruitmentDetail(self.recruitmentId)
         
         switch result {
         case .success(let response):
@@ -55,7 +58,7 @@ class DetailViewModel: ObservableObject {
         self.title = response.title
         self.companyName = response.company.name
         self.thumbnailUrl = response.image.original
-        self.isBookmarked = repository.isBookmarked(recruitmentId)
+        self.isBookmarked = bookmarkRepository.isBookmarked(recruitmentId)
         self.companyLogoImage = response.company.avatar?.original ?? ""
         self.whatDescription = response.whatDescription
         self.whyDescription = response.whyDescription
@@ -65,7 +68,7 @@ class DetailViewModel: ObservableObject {
     }
     
     private func setupBookmarkObserver() {
-        repository.bookmarkedCompanies
+        bookmarkRepository.bookmarkedRecruitments
             .receive(on: DispatchQueue.main)
             .sink { [weak self] bookmarkedRecruitments in
                 self?.isBookmarked = bookmarkedRecruitments.contains(where: { $0.id == self?.recruitmentId })
@@ -88,12 +91,12 @@ class DetailViewModel: ObservableObject {
         isBookmarked = !isBookmarked
         
         if isBookmarked {
-            let success = repository.addBookmark(generateRecruitmentFromCurrentUiState())
+            let success = bookmarkRepository.addBookmark(generateRecruitmentFromCurrentUiState())
             if !success {
                 isBookmarked = !isBookmarked
             }
         } else {
-            let success = repository.removeBookmark(recruitmentId)
+            let success = bookmarkRepository.removeBookmark(recruitmentId)
             if !success {
                 isBookmarked = !isBookmarked
             }
