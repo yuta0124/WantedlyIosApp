@@ -7,22 +7,6 @@ struct Recruitment {
     let companyLogoImage: String
     let thumbnailUrl: String
     
-    init(
-        id: Int,
-        title: String,
-        companyName: String,
-        isBookmarked: Bool,
-        companyLogoImage: String,
-        thumbnailUrl: String
-    ) {
-        self.id = id
-        self.title = title
-        self.companyName = companyName
-        self.isBookmarked = isBookmarked
-        self.companyLogoImage = companyLogoImage
-        self.thumbnailUrl = thumbnailUrl
-    }
-    
     static func from(_ response: RecruitmentsResponse) -> [Recruitment] {
         return response.data.map { recruitmentData in
             Recruitment(
