@@ -20,3 +20,4 @@ final class DefaultBookmarkRepository: BookmarkRepository {
         return realmManager.isBookmarked(id: id)
     }
 }
+
