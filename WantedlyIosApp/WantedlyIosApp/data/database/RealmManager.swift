@@ -5,12 +5,16 @@ import RealmSwift
 final class RealmManager {
     static let shared = RealmManager()
     
-    // swiftlint:disable:next force_try
-    let realm: Realm = try! Realm()
+    let realm: Realm
     private var notificationToken: NotificationToken?
     private var bookmarkedEntitiesPublisher = PassthroughSubject<[BookmarkedEntity], Never>()
     
     private init() {
+        do {
+            realm = try Realm()
+        } catch {
+            fatalError("Realmの初期化に失敗: \(error)")
+        }
         setupObserver()
     }
     

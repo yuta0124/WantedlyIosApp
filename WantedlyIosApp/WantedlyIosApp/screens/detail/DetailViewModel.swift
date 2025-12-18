@@ -14,7 +14,7 @@ class DetailViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: UIState
-    @Published private(set) var recruitmentId: Int = -1
+    @Published private(set) var recruitmentId: Int
     @Published private(set) var title: String = ""
     @Published private(set) var companyName: String = ""
     @Published private(set) var thumbnailUrl: String = ""
@@ -91,7 +91,8 @@ class DetailViewModel: ObservableObject {
         isBookmarked = !isBookmarked
         
         if isBookmarked {
-            let success = bookmarkRepository.addBookmark(generateRecruitmentFromCurrentUiState().toBookmarkedEntity())
+            let recritment: Recruitment = generateRecruitmentFromCurrentUiState()
+            let success = bookmarkRepository.addBookmark(recritment.toBookmarkedEntity())
             if !success {
                 isBookmarked = !isBookmarked
             }

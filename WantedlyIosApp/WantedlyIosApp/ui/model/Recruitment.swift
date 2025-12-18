@@ -1,4 +1,3 @@
-
 struct Recruitment {
     let id: Int
     let title: String
@@ -22,6 +21,7 @@ struct Recruitment {
 
     func toBookmarkedEntity() -> BookmarkedEntity {
         let entity = BookmarkedEntity()
+        entity.id = id
         entity.companyLogoImage = companyLogoImage
         entity.companyName = companyName
         entity.thumbnailUrl = thumbnailUrl
