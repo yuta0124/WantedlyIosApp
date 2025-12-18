@@ -68,7 +68,7 @@ class DetailViewModel: ObservableObject {
     }
     
     private func setupBookmarkObserver() {
-        bookmarkRepository.bookmarkedRecruitments
+        bookmarkRepository.bookmarkedEntities
             .receive(on: DispatchQueue.main)
             .sink { [weak self] bookmarkedRecruitments in
                 self?.isBookmarked = bookmarkedRecruitments.contains(where: { $0.id == self?.recruitmentId })
@@ -91,7 +91,7 @@ class DetailViewModel: ObservableObject {
         isBookmarked = !isBookmarked
         
         if isBookmarked {
-            let success = bookmarkRepository.addBookmark(generateRecruitmentFromCurrentUiState())
+            let success = bookmarkRepository.addBookmark(generateRecruitmentFromCurrentUiState().toBookmarkedEntity())
             if !success {
                 isBookmarked = !isBookmarked
             }

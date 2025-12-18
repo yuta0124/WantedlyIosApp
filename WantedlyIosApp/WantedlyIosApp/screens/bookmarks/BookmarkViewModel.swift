@@ -30,18 +30,18 @@ class BookmarkViewModel: ObservableObject {
     }
     
     private func setupStateCombine() {
-        bookmarkRepository.bookmarkedRecruitments
+        bookmarkRepository.bookmarkedEntities
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] bookmarkedRecruitments in
+            .sink { [weak self] bookmarkedEntities in
                 guard let self = self else { return }
                 
-                let loading: BookmarkLoadingState = if bookmarkedRecruitments.isEmpty {
+                let loading: BookmarkLoadingState = if bookmarkedEntities.isEmpty {
                     .empty
                 } else {
                     .none
                 }
                 
-                let recruitments: [Recruitment] = bookmarkedRecruitments.map {
+                let recruitments: [Recruitment] = bookmarkedEntities.map {
                     Recruitment(
                         id: $0.id,
                         title: $0.title,
@@ -60,15 +60,15 @@ class BookmarkViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    private func convertToRecruitments(from tables: [BookmarkedRecruitmentTable]) -> [Recruitment] {
-        return tables.map { table in
+    private func convertToRecruitments(from entities: [BookmarkedEntity]) -> [Recruitment] {
+        return entities.map { entity in
             Recruitment(
-                id: table.id,
-                title: table.title,
-                companyName: table.companyName,
+                id: entity.id,
+                title: entity.title,
+                companyName: entity.companyName,
                 isBookmarked: true,
-                companyLogoImage: table.companyLogoImage,
-                thumbnailUrl: table.thumbnailUrl
+                companyLogoImage: entity.companyLogoImage,
+                thumbnailUrl: entity.thumbnailUrl
             )
         }
     }

@@ -68,7 +68,7 @@ class RecruitmentsViewModel: ObservableObject {
         
         switch result {
         case .success(let response):
-            let newRecruitments = Recruitment.from(response)
+            let newRecruitments = Recruitment.create(from: response)
             let updatedRecruitments = createUpdatedRecruitments(from: newRecruitments)
             
             if page == RecruitmentsConstants.initialPage {
@@ -135,7 +135,7 @@ class RecruitmentsViewModel: ObservableObject {
         uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
         
         if uiState.recruitments[index].isBookmarked {
-            let success = bookmarkRepository.addBookmark(recruitment)
+            let success = bookmarkRepository.addBookmark(recruitment.toBookmarkedEntity())
             if !success {
                 uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
             }
@@ -148,16 +148,16 @@ class RecruitmentsViewModel: ObservableObject {
     }
     
     private func setupBookmarkObserver() {
-        bookmarkRepository.bookmarkedRecruitments
+        bookmarkRepository.bookmarkedEntities
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] bookmarkedRecruitments in
-                self?.updateBookmarkStatusFromDatabase(bookmarkedRecruitments)
+            .sink { [weak self] bookmarkedEntities in
+                self?.updateBookmarkStatusFromDatabase(bookmarkedEntities)
             }
             .store(in: &cancellables)
     }
     
-    private func updateBookmarkStatusFromDatabase(_ bookmarkedRecruitments: [BookmarkedRecruitmentTable]) {
-        let bookmarkedIds = Set(bookmarkedRecruitments.map { $0.id })
+    private func updateBookmarkStatusFromDatabase(_ bookmarkedEntities: [BookmarkedEntity]) {
+        let bookmarkedIds = Set(bookmarkedEntities.map { $0.id })
         
         uiState.recruitments = uiState.recruitments.map { recruitment in
             let isBookmarked = bookmarkedIds.contains(recruitment.id)

@@ -7,7 +7,7 @@ struct Recruitment {
     let companyLogoImage: String
     let thumbnailUrl: String
     
-    static func from(_ response: RecruitmentsResponse) -> [Recruitment] {
+    static func create(from response: RecruitmentsResponse) -> [Recruitment] {
         return response.data.map { recruitmentData in
             Recruitment(
                 id: recruitmentData.id,
@@ -20,13 +20,13 @@ struct Recruitment {
         }
     }
 
-    func toBookmarkedRecruitmentTable() -> BookmarkedRecruitmentTable {
-        return BookmarkedRecruitmentTable(
-            id: id,
-            companyLogoImage: companyLogoImage,
-            companyName: companyName,
-            thumbnailUrl: thumbnailUrl,
-            title: title
-        )
+    func toBookmarkedEntity() -> BookmarkedEntity {
+        let entity = BookmarkedEntity()
+        entity.companyLogoImage = companyLogoImage
+        entity.companyName = companyName
+        entity.thumbnailUrl = thumbnailUrl
+        entity.title = title
+        
+        return entity
     }
 }
