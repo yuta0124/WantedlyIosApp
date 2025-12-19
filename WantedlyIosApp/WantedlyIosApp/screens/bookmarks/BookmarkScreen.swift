@@ -11,7 +11,7 @@ struct BookmarkScreen: View {
         NavigationStack {
             ZStack {
                 if viewModel.uiState.loading == .empty {
-                    BookmarkEmptyView()
+                    EmptyView()
                 } else {
                     BookmarkListView(
                         recruitments: viewModel.uiState.recruitments,
@@ -28,17 +28,13 @@ struct BookmarkScreen: View {
             }
         }
     }
-}
-
-struct BookmarkEmptyView: View {
-    var body: some View {
-        VStack {
-            Spacer()
-            Text("bookmark_screen_content")
-                .font(.title)
-                .fontWeight(.bold)
-            Spacer()
-        }
+    
+    private func EmptyView() -> some View {
+        Text("ブックマークがありません")
+            .font(.title3)
+            .fontWeight(.bold)
+            .foregroundColor(.gray.opacity(0.6))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

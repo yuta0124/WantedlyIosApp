@@ -91,8 +91,8 @@ class DetailViewModel: ObservableObject {
         isBookmarked = !isBookmarked
         
         if isBookmarked {
-            let recritment: Recruitment = generateRecruitmentFromCurrentUiState()
-            let success = bookmarkRepository.addBookmark(recritment.toBookmarkedEntity())
+            let recruitment: Recruitment = generateRecruitmentFromCurrentUiState()
+            let success = bookmarkRepository.addBookmark(recruitment.toBookmarkedEntity())
             if !success {
                 isBookmarked = !isBookmarked
             }
