@@ -6,24 +6,25 @@
 //
 import Combine
 import Foundation
+import Observation
 
-@MainActor
-class DetailViewModel: ObservableObject {
-    private let wantedlyRepository: WantedlyRepository
-    private let bookmarkRepository: BookmarkRepository
-    private var cancellables = Set<AnyCancellable>()
+@Observable @MainActor
+class DetailViewModel {
+    @ObservationIgnored private let wantedlyRepository: WantedlyRepository
+    @ObservationIgnored private let bookmarkRepository: BookmarkRepository
+    @ObservationIgnored private var cancellables = Set<AnyCancellable>()
 
     // MARK: UIState
-    @Published private(set) var recruitmentId: Int
-    @Published private(set) var title: String = ""
-    @Published private(set) var companyName: String = ""
-    @Published private(set) var thumbnailUrl: String = ""
-    @Published private(set) var isBookmarked: Bool = false
-    @Published private(set) var companyLogoImage: String = ""
-    @Published private(set) var whatDescription: String = ""
-    @Published private(set) var whyDescription: String = ""
-    @Published private(set) var howDescription: String = ""
-    @Published private(set) var isLoading: Bool = true
+    private(set) var recruitmentId: Int
+    private(set) var title: String = ""
+    private(set) var companyName: String = ""
+    private(set) var thumbnailUrl: String = ""
+    private(set) var isBookmarked: Bool = false
+    private(set) var companyLogoImage: String = ""
+    private(set) var whatDescription: String = ""
+    private(set) var whyDescription: String = ""
+    private(set) var howDescription: String = ""
+    private(set) var isLoading: Bool = true
     
     init(
         recruitmentId: Int,
@@ -44,7 +45,8 @@ class DetailViewModel: ObservableObject {
         
         switch result {
         case .success(let response):
-            onSuccess(response.data)
+            updateUiState(response.data)
+            setupBookmarkObserver()
             
         case .failure(let error):
             print("詳細取得エラー: \(error.localizedDescription)")
@@ -54,7 +56,7 @@ class DetailViewModel: ObservableObject {
         self.isLoading = false
     }
     
-    private func onSuccess(_ response: RecruitmentDetailData) {
+    private func updateUiState(_ response: RecruitmentDetailData) {
         self.title = response.title
         self.companyName = response.company.name
         self.thumbnailUrl = response.image.original
@@ -63,8 +65,6 @@ class DetailViewModel: ObservableObject {
         self.whatDescription = response.whatDescription
         self.whyDescription = response.whyDescription
         self.howDescription = response.howDescription
-        
-        setupBookmarkObserver()
     }
     
     private func setupBookmarkObserver() {

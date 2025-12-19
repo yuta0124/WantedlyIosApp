@@ -7,11 +7,11 @@
 import SwiftUI
 
 struct DetailScreen: View {
-    @StateObject private var viewModel: DetailViewModel
+    @State private var viewModel: DetailViewModel
     @State private var scrollOffset: CGFloat = 0
     
     init(recruitmentId: Int) {
-        _viewModel = StateObject(wrappedValue: DetailViewModel(recruitmentId: recruitmentId))
+        _viewModel = State(wrappedValue: DetailViewModel(recruitmentId: recruitmentId))
     }
     
     var body: some View {
