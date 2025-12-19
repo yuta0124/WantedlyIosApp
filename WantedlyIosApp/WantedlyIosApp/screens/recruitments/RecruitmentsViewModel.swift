@@ -12,12 +12,18 @@ struct RecruitmentsUiState {
 @MainActor
 class RecruitmentsViewModel: ObservableObject {
     @Published private(set) var uiState = RecruitmentsUiState()
-    private let repository: WantedlyRepository = DefaultWantedlyRepository()
+    private let wantedlyRepository: WantedlyRepository
+    private let bookmarkRepository: BookmarkRepository
     private var currentPage = RecruitmentsConstants.initialPage
     private var hasMoreData = true
     private var cancellables = Set<AnyCancellable>()
     
-    init() {
+    init(
+        wantedlyRepository: WantedlyRepository = DefaultWantedlyRepository(),
+        bookmarkRepository: BookmarkRepository = DefaultBookmarkRepository()
+    ) {
+        self.wantedlyRepository = wantedlyRepository
+        self.bookmarkRepository = bookmarkRepository
         Task {
             setupBookmarkObserver()
             await fetchRecruitments()
@@ -55,14 +61,14 @@ class RecruitmentsViewModel: ObservableObject {
             uiState.isLoading = true
         }
         
-        let result = await repository.fetchRecruitments(
+        let result = await wantedlyRepository.fetchRecruitments(
             keyword: keyword,
             page: page
         )
         
         switch result {
         case .success(let response):
-            let newRecruitments = Recruitment.from(response)
+            let newRecruitments = Recruitment.create(from: response)
             let updatedRecruitments = createUpdatedRecruitments(from: newRecruitments)
             
             if page == RecruitmentsConstants.initialPage {
@@ -86,7 +92,7 @@ class RecruitmentsViewModel: ObservableObject {
     
     private func createUpdatedRecruitments(from recruitments: [Recruitment]) -> [Recruitment] {
         return recruitments.map { recruitment in
-            let isBookmarked = repository.isBookmarked(recruitment.id)
+            let isBookmarked = bookmarkRepository.isBookmarked(recruitment.id)
             return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
         }
     }
@@ -129,12 +135,12 @@ class RecruitmentsViewModel: ObservableObject {
         uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
         
         if uiState.recruitments[index].isBookmarked {
-            let success = repository.addBookmark(recruitment)
+            let success = bookmarkRepository.addBookmark(recruitment.toBookmarkedEntity())
             if !success {
                 uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
             }
         } else {
-            let success = repository.removeBookmark(recruitmentId)
+            let success = bookmarkRepository.removeBookmark(recruitmentId)
             if !success {
                 uiState.recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
             }
@@ -142,16 +148,16 @@ class RecruitmentsViewModel: ObservableObject {
     }
     
     private func setupBookmarkObserver() {
-        repository.bookmarkedCompanies
+        bookmarkRepository.bookmarkedEntities
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] bookmarkedRecruitments in
-                self?.updateBookmarkStatusFromDatabase(bookmarkedRecruitments)
+            .sink { [weak self] bookmarkedEntities in
+                self?.updateBookmarkStatusFromDatabase(bookmarkedEntities)
             }
             .store(in: &cancellables)
     }
     
-    private func updateBookmarkStatusFromDatabase(_ bookmarkedRecruitments: [BookmarkedRecruitmentTable]) {
-        let bookmarkedIds = Set(bookmarkedRecruitments.map { $0.id })
+    private func updateBookmarkStatusFromDatabase(_ bookmarkedEntities: [BookmarkedEntity]) {
+        let bookmarkedIds = Set(bookmarkedEntities.map { $0.id })
         
         uiState.recruitments = uiState.recruitments.map { recruitment in
             let isBookmarked = bookmarkedIds.contains(recruitment.id)

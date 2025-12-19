@@ -1,16 +1,10 @@
-import Combine
 import Foundation
 
 final class DefaultWantedlyRepository: WantedlyRepository {
     private let networkClient: NetworkClient
-    private let realmManager = RealmManager.shared
     
     init(networkClient: NetworkClient = DefaultNetworkClient()) {
         self.networkClient = networkClient
-    }
-    
-    var bookmarkedCompanies: AnyPublisher<[BookmarkedRecruitmentTable], Never> {
-        return realmManager.getBookmarkedRecruitmentsPublisher()
     }
     
     func fetchRecruitments(keyword: String?, page: Int) async -> Result<RecruitmentsResponse, NetworkError> {
@@ -36,19 +30,5 @@ final class DefaultWantedlyRepository: WantedlyRepository {
         } catch {
             return .failure(error.toNetworkError())
         }
-    }
-        
-    func addBookmark(_ recruitment: Recruitment) -> Bool {
-        let success = realmManager.addBookmarkedRecruitment(recruitment)
-        return success
-    }
-    
-    func removeBookmark(_ id: Int) -> Bool {
-        let success = realmManager.removeBookmarkedRecruitment(id: id)
-        return success
-    }
-    
-    func isBookmarked(_ id: Int) -> Bool {
-        return realmManager.isBookmarked(id: id)
     }
 }

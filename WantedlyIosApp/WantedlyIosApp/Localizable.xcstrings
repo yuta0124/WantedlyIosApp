@@ -2,6 +2,7 @@
   "sourceLanguage" : "ja",
   "strings" : {
     "bookmark_screen_content" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ja" : {
           "stringUnit" : {
@@ -50,6 +51,9 @@
           }
         }
       }
+    },
+    "ブックマークがありません" : {
+
     }
   },
   "version" : "1.0"

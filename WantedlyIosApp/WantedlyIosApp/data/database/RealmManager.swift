@@ -5,56 +5,59 @@ import RealmSwift
 final class RealmManager {
     static let shared = RealmManager()
     
-    // swiftlint:disable:next force_try
-    let realm: Realm = try! Realm()
+    let realm: Realm
     private var notificationToken: NotificationToken?
-    private var bookmarkedRecruitmentsPublisher = PassthroughSubject<[BookmarkedRecruitmentTable], Never>()
+    private var bookmarkedEntitiesPublisher = PassthroughSubject<[BookmarkedEntity], Never>()
     
     private init() {
+        do {
+            realm = try Realm()
+        } catch {
+            fatalError("Realmの初期化に失敗: \(error)")
+        }
         setupObserver()
     }
     
-    func addBookmarkedRecruitment(_ recruitment: Recruitment) -> Bool {
+    func addBookmarkedEntity(_ entity: BookmarkedEntity) -> Bool {
         do {
-            let bookmarkedRecruitment = recruitment.toBookmarkedRecruitmentTable()
             try realm.write {
-                realm.add(bookmarkedRecruitment, update: .modified)
+                realm.add(entity, update: .modified)
             }
             return true
         } catch {
-            print("addBookmarkedRecruitment: \(error)")
+            print("addBookmarkedEntity: \(error)")
             return false
         }
     }
     
-    func removeBookmarkedRecruitment(id: Int) -> Bool {
+    func removeBookmarkedEntity(id: Int) -> Bool {
         do {
-            if let bookmarkedRecruitment = realm.object(ofType: BookmarkedRecruitmentTable.self, forPrimaryKey: id) {
+            if let bookmarkedEntity = realm.object(ofType: BookmarkedEntity.self, forPrimaryKey: id) {
                 try realm.write {
-                    realm.delete(bookmarkedRecruitment)
+                    realm.delete(bookmarkedEntity)
                 }
                 return true
             }
             return false
         } catch {
-            print("removeBookmarkedRecruitment: \(error)")
+            print("removeBookmarkedEntity: \(error)")
             return false
         }
     }
     
     func isBookmarked(id: Int) -> Bool {
-        return realm.object(ofType: BookmarkedRecruitmentTable.self, forPrimaryKey: id) != nil
+        return realm.object(ofType: BookmarkedEntity.self, forPrimaryKey: id) != nil
     }
     
-    func getBookmarkedRecruitmentsPublisher() -> AnyPublisher<[BookmarkedRecruitmentTable], Never> {
-        return bookmarkedRecruitmentsPublisher.eraseToAnyPublisher()
+    func getBookmarkedEntitiesPublisher() -> AnyPublisher<[BookmarkedEntity], Never> {
+        return bookmarkedEntitiesPublisher.eraseToAnyPublisher()
     }
     
     private func setupObserver() {
-        let results = realm.objects(BookmarkedRecruitmentTable.self)
+        let results = realm.objects(BookmarkedEntity.self)
         notificationToken = results.observe { [weak self] _ in
-            let bookmarkedRecruitments = Array(results)
-            self?.bookmarkedRecruitmentsPublisher.send(bookmarkedRecruitments)
+            let bookmarkedEntities = Array(results)
+            self?.bookmarkedEntitiesPublisher.send(bookmarkedEntities)
         }
     }
 }
