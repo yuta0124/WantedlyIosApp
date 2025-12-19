@@ -39,7 +39,7 @@ class RecruitmentsViewModel: ObservableObject {
         case .loadMore:
             loadMore()
         case .toggleBookmark(let recruitmentId):
-            toggleBookmark(recruitmentId: recruitmentId)
+            toggleBookmark(for: recruitmentId)
         }
     }
     
@@ -52,11 +52,11 @@ class RecruitmentsViewModel: ObservableObject {
             currentPage = RecruitmentsConstants.initialPage
             hasMoreData = true
             uiState.isLoading = true
-            await fetchRecruitments(uiState.searchText, page: RecruitmentsConstants.initialPage)
+            await fetchRecruitments(keyword: uiState.searchText, page: RecruitmentsConstants.initialPage)
         }
     }
     
-    private func fetchRecruitments(_ keyword: String? = nil, page: Int = RecruitmentsConstants.initialPage) async {
+    private func fetchRecruitments(keyword: String? = nil, page: Int = RecruitmentsConstants.initialPage) async {
         if page == RecruitmentsConstants.initialPage {
             uiState.isLoading = true
         }
@@ -121,12 +121,12 @@ class RecruitmentsViewModel: ObservableObject {
         Task {
             uiState.isLoadingMore = true
             let nextPage = currentPage + 1
-            await fetchRecruitments(uiState.searchText, page: nextPage)
+            await fetchRecruitments(keyword: uiState.searchText, page: nextPage)
             uiState.isLoadingMore = false
         }
     }
     
-    private func toggleBookmark(recruitmentId: Int) {
+    private func toggleBookmark(for recruitmentId: Int) {
         guard let index = uiState.recruitments.firstIndex(where: { $0.id == recruitmentId }) else {
             return
         }
