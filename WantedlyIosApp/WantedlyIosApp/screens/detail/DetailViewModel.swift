@@ -10,11 +10,11 @@ import Observation
 
 @Observable @MainActor
 class DetailViewModel {
-    @ObservationIgnored private let wantedlyRepository: WantedlyRepository
-    @ObservationIgnored private let bookmarkRepository: BookmarkRepository
-    @ObservationIgnored private var cancellables = Set<AnyCancellable>()
+    private let wantedlyRepository: WantedlyRepository
+    private let bookmarkRepository: BookmarkRepository
+    private var cancellables = Set<AnyCancellable>()
 
-    // MARK: UIState
+    // MARK: UiState
     private(set) var recruitmentId: Int
     private(set) var title: String = ""
     private(set) var companyName: String = ""
