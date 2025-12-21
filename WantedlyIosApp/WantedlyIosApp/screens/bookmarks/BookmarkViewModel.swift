@@ -21,7 +21,13 @@ class BookmarkViewModel {
         setupStateCombine()
     }
     
-    private func setupStateCombine() {
+    func onBookmarkToggled(_ id: Int) {
+        bookmarkRepository.removeBookmark(id)
+    }
+}
+
+private extension BookmarkViewModel {
+    func setupStateCombine() {
         bookmarkRepository.bookmarkedEntities
             .receive(on: DispatchQueue.main)
             .sink { [weak self] bookmarkedEntities in
@@ -41,7 +47,7 @@ class BookmarkViewModel {
             .store(in: &cancellables)
     }
     
-    private func convertToRecruitments(from entities: [BookmarkedEntity]) -> [Recruitment] {
+    func convertToRecruitments(from entities: [BookmarkedEntity]) -> [Recruitment] {
         return entities.map { entity in
             Recruitment(
                 id: entity.id,
@@ -52,9 +58,5 @@ class BookmarkViewModel {
                 thumbnailUrl: entity.thumbnailUrl
             )
         }
-    }
-    
-    func onBookmarkToggled(_ id: Int) {
-        bookmarkRepository.removeBookmark(id)
     }
 }

@@ -36,91 +36,6 @@ class RecruitmentsViewModel {
         }
     }
     
-    private func fetchRecruitments(keyword: String? = nil, page: Int = RecruitmentsConstants.initialPage) async {
-        if page == RecruitmentsConstants.initialPage {
-            isLoading = true
-        }
-        
-        let result = await wantedlyRepository.fetchRecruitments(
-            keyword: keyword,
-            page: page
-        )
-        
-        switch result {
-        case .success(let response):
-            let newRecruitments = Recruitment.create(from: response)
-            let updatedRecruitments = createUpdatedRecruitments(from: newRecruitments)
-            
-            if page == RecruitmentsConstants.initialPage {
-                recruitments = updatedRecruitments
-            } else {
-                recruitments.append(contentsOf: updatedRecruitments)
-            }
-            
-            hasMoreData = newRecruitments.count >= RecruitmentsConstants.pageSize
-            currentPage = page
-            
-        case .failure(let error):
-            print("募集一覧取得エラー: \(error.localizedDescription)")
-            // TODO: エラーハンドリング
-        }
-        
-        if page == RecruitmentsConstants.initialPage {
-            isLoading = false
-        }
-    }
-    
-    private func createUpdatedRecruitments(from recruitments: [Recruitment]) -> [Recruitment] {
-        return recruitments.map { recruitment in
-            let isBookmarked = bookmarkRepository.isBookmarked(recruitment.id)
-            return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
-        }
-    }
-    
-    private func updateRecruitmentBookmarkStatus(recruitment: Recruitment, isBookmarked: Bool) -> Recruitment {
-        return Recruitment(
-            id: recruitment.id,
-            title: recruitment.title,
-            companyName: recruitment.companyName,
-            isBookmarked: isBookmarked,
-            companyLogoImage: recruitment.companyLogoImage,
-            thumbnailUrl: recruitment.thumbnailUrl
-        )
-    }
-    
-    private func updateRecruitmentBookmarkStatus(recruitmentId: Int, isBookmarked: Bool) -> Recruitment? {
-        guard let recruitment = recruitments.first(where: { $0.id == recruitmentId }) else {
-            return nil
-        }
-        return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
-    }
-    
-    private func setupBookmarkObserver() {
-        bookmarkRepository.bookmarkedEntities
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] bookmarkedEntities in
-                self?.updateBookmarkStatusFromDatabase(bookmarkedEntities)
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func updateBookmarkStatusFromDatabase(_ bookmarkedEntities: [BookmarkedEntity]) {
-        let currentBookmarkedIds = Set(bookmarkedEntities.map { $0.id })
-        
-        let addedIds = currentBookmarkedIds.subtracting(previousBookmarkedIds)
-        let removedIds = previousBookmarkedIds.subtracting(currentBookmarkedIds)
-        let changedIds = addedIds.union(removedIds)
-        
-        guard !changedIds.isEmpty else { return }
-        
-        for (index, recruitment) in recruitments.enumerated() where changedIds.contains(recruitment.id) {
-            let isBookmarked = currentBookmarkedIds.contains(recruitment.id)
-            recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
-        }
-        
-        previousBookmarkedIds = currentBookmarkedIds
-    }
-    
     func onSearchTextChanged(_ value: String) {
         searchText = value
     }
@@ -164,5 +79,92 @@ class RecruitmentsViewModel {
                 recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: !recruitment.isBookmarked)
             }
         }
+    }
+}
+
+private extension RecruitmentsViewModel {
+    func fetchRecruitments(keyword: String? = nil, page: Int = RecruitmentsConstants.initialPage) async {
+        if page == RecruitmentsConstants.initialPage {
+            isLoading = true
+        }
+        
+        let result = await wantedlyRepository.fetchRecruitments(
+            keyword: keyword,
+            page: page
+        )
+        
+        switch result {
+        case .success(let response):
+            let newRecruitments = Recruitment.create(from: response)
+            let updatedRecruitments = createUpdatedRecruitments(from: newRecruitments)
+            
+            if page == RecruitmentsConstants.initialPage {
+                recruitments = updatedRecruitments
+            } else {
+                recruitments.append(contentsOf: updatedRecruitments)
+            }
+            
+            hasMoreData = newRecruitments.count >= RecruitmentsConstants.pageSize
+            currentPage = page
+            
+        case .failure(let error):
+            print("募集一覧取得エラー: \(error.localizedDescription)")
+            // TODO: エラーハンドリング
+        }
+        
+        if page == RecruitmentsConstants.initialPage {
+            isLoading = false
+        }
+    }
+    
+    func createUpdatedRecruitments(from recruitments: [Recruitment]) -> [Recruitment] {
+        return recruitments.map { recruitment in
+            let isBookmarked = bookmarkRepository.isBookmarked(recruitment.id)
+            return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
+        }
+    }
+    
+    func updateRecruitmentBookmarkStatus(recruitment: Recruitment, isBookmarked: Bool) -> Recruitment {
+        return Recruitment(
+            id: recruitment.id,
+            title: recruitment.title,
+            companyName: recruitment.companyName,
+            isBookmarked: isBookmarked,
+            companyLogoImage: recruitment.companyLogoImage,
+            thumbnailUrl: recruitment.thumbnailUrl
+        )
+    }
+    
+    func updateRecruitmentBookmarkStatus(recruitmentId: Int, isBookmarked: Bool) -> Recruitment? {
+        guard let recruitment = recruitments.first(where: { $0.id == recruitmentId }) else {
+            return nil
+        }
+        return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
+    }
+    
+    func setupBookmarkObserver() {
+        bookmarkRepository.bookmarkedEntities
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] bookmarkedEntities in
+                self?.updateBookmarkStatusFromDatabase(bookmarkedEntities)
+            }
+            .store(in: &cancellables)
+    }
+    
+    func updateBookmarkStatusFromDatabase(_ bookmarkedEntities: [BookmarkedEntity]) {
+        let currentBookmarkedIds = Set(bookmarkedEntities.map { $0.id })
+        
+        let addedIds = currentBookmarkedIds.subtracting(previousBookmarkedIds)
+        let removedIds = previousBookmarkedIds.subtracting(currentBookmarkedIds)
+        let changedIds = addedIds.union(removedIds)
+        
+        guard !changedIds.isEmpty else { return }
+        
+        for (index, recruitment) in recruitments.enumerated() where changedIds.contains(recruitment.id) {
+            let isBookmarked = currentBookmarkedIds.contains(recruitment.id)
+            recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
+        }
+        
+        previousBookmarkedIds = currentBookmarkedIds
     }
 }

@@ -40,53 +40,6 @@ class DetailViewModel {
         }
     }
     
-    private func fetchRecruitmentDetail() async {
-        let result = await wantedlyRepository.fetchRecruitmentDetail(self.recruitmentId)
-        
-        switch result {
-        case .success(let response):
-            updateUiState(response.data)
-            setupBookmarkObserver()
-            
-        case .failure(let error):
-            print("詳細取得エラー: \(error.localizedDescription)")
-            // TODO: エラーハンドリング
-        }
-        
-        self.isLoading = false
-    }
-    
-    private func updateUiState(_ response: RecruitmentDetailData) {
-        self.title = response.title
-        self.companyName = response.company.name
-        self.thumbnailUrl = response.image.original
-        self.isBookmarked = bookmarkRepository.isBookmarked(recruitmentId)
-        self.companyLogoImage = response.company.avatar?.original ?? ""
-        self.whatDescription = response.whatDescription
-        self.whyDescription = response.whyDescription
-        self.howDescription = response.howDescription
-    }
-    
-    private func setupBookmarkObserver() {
-        bookmarkRepository.bookmarkedEntities
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] bookmarkedRecruitments in
-                self?.isBookmarked = bookmarkedRecruitments.contains(where: { $0.id == self?.recruitmentId })
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func generateRecruitmentFromCurrentUiState() -> Recruitment {
-        return Recruitment(
-            id: recruitmentId,
-            title: title,
-            companyName: companyName,
-            isBookmarked: isBookmarked,
-            companyLogoImage: companyLogoImage,
-            thumbnailUrl: thumbnailUrl
-        )
-    }
-    
     func onBookmarkToggle() {
         isBookmarked = !isBookmarked
         
@@ -102,5 +55,54 @@ class DetailViewModel {
                 isBookmarked = !isBookmarked
             }
         }
+    }
+}
+
+private extension DetailViewModel {
+    func fetchRecruitmentDetail() async {
+        let result = await wantedlyRepository.fetchRecruitmentDetail(self.recruitmentId)
+        
+        switch result {
+        case .success(let response):
+            updateUiState(response.data)
+            setupBookmarkObserver()
+            
+        case .failure(let error):
+            print("詳細取得エラー: \(error.localizedDescription)")
+            // TODO: エラーハンドリング
+        }
+        
+        self.isLoading = false
+    }
+    
+    func updateUiState(_ response: RecruitmentDetailData) {
+        self.title = response.title
+        self.companyName = response.company.name
+        self.thumbnailUrl = response.image.original
+        self.isBookmarked = bookmarkRepository.isBookmarked(recruitmentId)
+        self.companyLogoImage = response.company.avatar?.original ?? ""
+        self.whatDescription = response.whatDescription
+        self.whyDescription = response.whyDescription
+        self.howDescription = response.howDescription
+    }
+    
+    func setupBookmarkObserver() {
+        bookmarkRepository.bookmarkedEntities
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] bookmarkedRecruitments in
+                self?.isBookmarked = bookmarkedRecruitments.contains(where: { $0.id == self?.recruitmentId })
+            }
+            .store(in: &cancellables)
+    }
+    
+    func generateRecruitmentFromCurrentUiState() -> Recruitment {
+        return Recruitment(
+            id: recruitmentId,
+            title: title,
+            companyName: companyName,
+            isBookmarked: isBookmarked,
+            companyLogoImage: companyLogoImage,
+            thumbnailUrl: thumbnailUrl
+        )
     }
 }
