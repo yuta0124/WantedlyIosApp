@@ -22,6 +22,7 @@ class RecruitmentsViewModel {
     
     private var currentPage = RecruitmentsConstants.initialPage
     private var hasMoreData = true
+    private var previousBookmarkedIds: Set<Int> = []
     
     init(
         wantedlyRepository: WantedlyRepository = DefaultWantedlyRepository(),
@@ -104,12 +105,20 @@ class RecruitmentsViewModel {
     }
     
     private func updateBookmarkStatusFromDatabase(_ bookmarkedEntities: [BookmarkedEntity]) {
-        let bookmarkedIds = Set(bookmarkedEntities.map { $0.id })
+        let currentBookmarkedIds = Set(bookmarkedEntities.map { $0.id })
         
-        recruitments = recruitments.map { recruitment in
-            let isBookmarked = bookmarkedIds.contains(recruitment.id)
-            return updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
+        let addedIds = currentBookmarkedIds.subtracting(previousBookmarkedIds)
+        let removedIds = previousBookmarkedIds.subtracting(currentBookmarkedIds)
+        let changedIds = addedIds.union(removedIds)
+        
+        guard !changedIds.isEmpty else { return }
+        
+        for (index, recruitment) in recruitments.enumerated() where changedIds.contains(recruitment.id) {
+            let isBookmarked = currentBookmarkedIds.contains(recruitment.id)
+            recruitments[index] = updateRecruitmentBookmarkStatus(recruitment: recruitment, isBookmarked: isBookmarked)
         }
+        
+        previousBookmarkedIds = currentBookmarkedIds
     }
     
     func onSearchTextChanged(_ value: String) {
