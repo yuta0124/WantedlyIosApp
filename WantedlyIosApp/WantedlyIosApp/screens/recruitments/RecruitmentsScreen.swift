@@ -80,9 +80,7 @@ struct RecruitmentsScreen: View {
                 }
                 
                 if viewModel.uiState.isLoading {
-                    ProgressView()
-                        .scaleEffect(1.5)
-                        .progressViewStyle(CircularProgressViewStyle(tint: .wantedlyBlue))
+                    LoadingView()
                 }
             }
         }

@@ -1,8 +1,9 @@
+
 struct Recruitment {
     let id: Int
     let title: String
     let companyName: String
-    let isBookmarked: Bool
+    var isBookmarked: Bool
     let companyLogoImage: String
     let thumbnailUrl: String
     
