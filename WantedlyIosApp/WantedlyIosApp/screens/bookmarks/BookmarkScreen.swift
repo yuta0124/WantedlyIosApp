@@ -1,22 +1,27 @@
+//
+//  BookmarkScreen.swift
+//  WantedlyIosApp
+//
+//  Created by 佐藤優太 on 2025/11/11.
+//
 import SwiftUI
 
-enum BookmarkIntent {
-    case bookmarkClick(Int)
-}
-
 struct BookmarkScreen: View {
-    @StateObject private var viewModel = BookmarkViewModel()
+    @State private var viewModel = BookmarkViewModel()
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                if viewModel.uiState.loading == .empty {
+            Group {
+                switch viewModel.recruitments {
+                case .none:
+                    LoadingView()
+                case .some(let recruitments) where recruitments.isEmpty:
                     EmptyView()
-                } else {
+                case .some(let recruitments):
                     BookmarkListView(
-                        recruitments: viewModel.uiState.recruitments,
-                        onAction: { intent in
-                            viewModel.onAction(intent)
+                        recruitments: recruitments,
+                        onBookmarkToggled: { id in
+                            viewModel.onBookmarkToggled(id)
                         }
                     )
                 }
@@ -28,19 +33,11 @@ struct BookmarkScreen: View {
             }
         }
     }
-    
-    private func EmptyView() -> some View {
-        Text("ブックマークがありません")
-            .font(.title3)
-            .fontWeight(.bold)
-            .foregroundColor(.gray.opacity(0.6))
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
 }
 
-struct BookmarkListView: View {
+private struct BookmarkListView: View {
     let recruitments: [Recruitment]
-    let onAction: (BookmarkIntent) -> Void
+    let onBookmarkToggled: (Int) -> Void
     
     var body: some View {
         ScrollView {
@@ -55,7 +52,7 @@ struct BookmarkListView: View {
                             recruitmentId: recruitment.id,
                             isBookmarked: recruitment.isBookmarked,
                             onBookmarkToggled: {
-                                onAction(.bookmarkClick(recruitment.id))
+                                onBookmarkToggled(recruitment.id)
                             }
                         )
                     }
@@ -64,6 +61,16 @@ struct BookmarkListView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
         }
+    }
+}
+
+private struct EmptyView: View {
+    var body: some View {
+        Text("ブックマークがありません")
+            .font(.title3)
+            .fontWeight(.bold)
+            .foregroundColor(.gray.opacity(0.6))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
